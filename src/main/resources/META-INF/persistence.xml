@@ -39,6 +39,12 @@
             <property name="hibernate.format_sql" value="true"/>
             <property name="hibernate.use_sql_comments" value="true"/>
             
+            <!-- Transaction Isolation - READ_COMMITTED để tránh stale data -->
+            <property name="hibernate.connection.isolation" value="2"/>
+            
+            <!-- Force flush mode to always sync with DB -->
+            <property name="hibernate.flushMode" value="ALWAYS"/>
+            
             <!-- Connection Pool - Using default Hibernate connection pool -->
             <property name="hibernate.connection.provider_class" value="org.hibernate.connection.C3P0ConnectionProvider"/>
             <property name="hibernate.c3p0.min_size" value="5"/>
@@ -46,17 +52,18 @@
             <property name="hibernate.c3p0.timeout" value="300"/>
             <property name="hibernate.c3p0.max_statements" value="50"/>
             <property name="hibernate.c3p0.idle_test_period" value="300"/>
+            <property name="hibernate.c3p0.testConnectionOnCheckout" value="true"/>
+            <property name="hibernate.c3p0.preferredTestQuery" value="SELECT 1"/>
             
-            <!-- Caching - Disabled for now -->
+            <!-- Caching - COMPLETELY DISABLED -->
             <property name="hibernate.cache.use_second_level_cache" value="false"/>
             <property name="hibernate.cache.use_query_cache" value="false"/>
-            <!-- <property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.jcache.JCacheRegionFactory"/> -->
             
-            <!-- Performance -->
-            <property name="hibernate.jdbc.batch_size" value="20"/>
-            <property name="hibernate.order_inserts" value="true"/>
-            <property name="hibernate.order_updates" value="true"/>
-            <property name="hibernate.jdbc.batch_versioned_data" value="true"/>
+            <!-- Performance - DISABLED batch to ensure immediate execution -->
+            <property name="hibernate.jdbc.batch_size" value="0"/>
+            <property name="hibernate.order_inserts" value="false"/>
+            <property name="hibernate.order_updates" value="false"/>
+            <property name="hibernate.jdbc.batch_versioned_data" value="false"/>
             
             <!-- Schema -->
             <property name="hibernate.default_schema" value="public"/>

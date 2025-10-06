@@ -9,9 +9,8 @@ import jakarta.validation.constraints.NotBlank;
  */
 public class LoginRequest {
     
-    @NotBlank(message = "Email không được để trống")
-    @Email(message = "Email không hợp lệ")
-    private String email;
+    @NotBlank(message = "Tên đăng nhập hoặc email không được để trống")
+    private String username; // Can be either username or email
     
     @NotBlank(message = "Mật khẩu không được để trống")
     private String password;
@@ -19,18 +18,18 @@ public class LoginRequest {
     // Constructors
     public LoginRequest() {}
     
-    public LoginRequest(String email, String password) {
-        this.email = email;
+    public LoginRequest(String username, String password) {
+        this.username = username;
         this.password = password;
     }
     
     // Getters and Setters
-    public String getEmail() {
-        return email;
+    public String getUsername() {
+        return username;
     }
     
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUsername(String username) {
+        this.username = username;
     }
     
     public String getPassword() {
@@ -44,7 +43,7 @@ public class LoginRequest {
     @Override
     public String toString() {
         return "LoginRequest{" +
-                "email='" + email + '\'' +
+                "username='" + username + '\'' +
                 ", password='[PROTECTED]'" +
                 '}';
     }

@@ -1,8 +1,8 @@
 package com.utephonehub.util;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,7 +23,25 @@ public class JsonUtil {
     public JsonUtil() {
         this.gson = new GsonBuilder()
                 .setPrettyPrinting()
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
                 .create();
+    }
+    
+    /**
+     * Custom LocalDateTime adapter for Gson
+     */
+    private static class LocalDateTimeAdapter implements JsonSerializer<LocalDateTime>, JsonDeserializer<LocalDateTime> {
+        private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        
+        @Override
+        public JsonElement serialize(LocalDateTime dateTime, java.lang.reflect.Type type, JsonSerializationContext context) {
+            return new JsonPrimitive(dateTime.format(FORMATTER));
+        }
+        
+        @Override
+        public LocalDateTime deserialize(JsonElement json, java.lang.reflect.Type type, JsonDeserializationContext context) {
+            return LocalDateTime.parse(json.getAsString(), FORMATTER);
+        }
     }
     
     /**

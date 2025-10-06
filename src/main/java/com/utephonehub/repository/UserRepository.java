@@ -25,20 +25,40 @@ public class UserRepository {
      */
     public User save(User user) {
         EntityManager em = DatabaseConfig.getEntityManager();
+        User savedUser = null;
         try {
             DatabaseConfig.beginTransaction();
             if (user.getId() == null) {
                 em.persist(user);
+                em.flush();
                 logger.info("Created new user: {}", user.getEmail());
+                savedUser = user;
             } else {
-                user = em.merge(user);
+                savedUser = em.merge(user);
+                em.flush(); // Force sync to database immediately
                 logger.info("Updated user: {}", user.getEmail());
             }
+            
+            // Get ID before commit
+            Long userId = savedUser.getId();
+            
             DatabaseConfig.commitTransaction();
-            return user;
+            
+            // Clear cache sau commit
+            em.clear();
+            
+            // Query lại để get fresh data (dùng new transaction/em để safety)
+            User freshUser = em.find(User.class, userId);
+            if (freshUser != null) {
+                logger.debug("Refreshed user from DB: {}", freshUser.getEmail());
+                return freshUser;
+            }
+            
+            logger.warn("Could not refresh user, returning merged instance");
+            return savedUser;
         } catch (Exception e) {
             DatabaseConfig.rollbackTransaction();
-            logger.error("Error saving user: {}", user.getEmail(), e);
+            logger.error("Error saving user: {}", user != null ? user.getEmail() : "null", e);
             throw new RuntimeException("Failed to save user", e);
         }
     }
@@ -51,7 +71,11 @@ public class UserRepository {
     public Optional<User> findById(Long id) {
         EntityManager em = DatabaseConfig.getEntityManager();
         try {
+            em.clear(); // Clear cache trước khi query
             User user = em.find(User.class, id);
+            if (user != null) {
+                em.refresh(user); // Force refresh từ DB
+            }
             return Optional.ofNullable(user);
         } catch (Exception e) {
             logger.error("Error finding user by ID: {}", id, e);
@@ -67,13 +91,35 @@ public class UserRepository {
     public Optional<User> findByEmail(String email) {
         EntityManager em = DatabaseConfig.getEntityManager();
         try {
+            em.clear(); // Clear cache trước khi query
             TypedQuery<User> query = em.createQuery(
                 "SELECT u FROM User u WHERE u.email = :email", User.class);
             query.setParameter("email", email);
+            query.setHint("jakarta.persistence.cache.retrieveMode", "BYPASS"); // Bypass cache
+            query.setHint("jakarta.persistence.cache.storeMode", "BYPASS"); // Don't store in cache
             User user = query.getSingleResult();
             return Optional.ofNullable(user);
         } catch (Exception e) {
             logger.debug("User not found with email: {}", email);
+            return Optional.empty();
+        }
+    }
+    
+    /**
+     * Tìm user theo username
+     * @param username Username cần tìm
+     * @return Optional<User>
+     */
+    public Optional<User> findByUsername(String username) {
+        EntityManager em = DatabaseConfig.getEntityManager();
+        try {
+            TypedQuery<User> query = em.createQuery(
+                "SELECT u FROM User u WHERE u.username = :username", User.class);
+            query.setParameter("username", username);
+            User user = query.getSingleResult();
+            return Optional.ofNullable(user);
+        } catch (Exception e) {
+            logger.debug("User not found with username: {}", username);
             return Optional.empty();
         }
     }
@@ -94,6 +140,25 @@ public class UserRepository {
         } catch (Exception e) {
             logger.error("Error checking email existence: {}", email, e);
             throw new RuntimeException("Failed to check email existence", e);
+        }
+    }
+    
+    /**
+     * Kiểm tra username đã tồn tại chưa
+     * @param username Username cần kiểm tra
+     * @return true nếu username đã tồn tại
+     */
+    public boolean existsByUsername(String username) {
+        EntityManager em = DatabaseConfig.getEntityManager();
+        try {
+            TypedQuery<Long> query = em.createQuery(
+                "SELECT COUNT(u) FROM User u WHERE u.username = :username", Long.class);
+            query.setParameter("username", username);
+            Long count = query.getSingleResult();
+            return count > 0;
+        } catch (Exception e) {
+            logger.error("Error checking username existence: {}", username, e);
+            throw new RuntimeException("Failed to check username existence", e);
         }
     }
     

@@ -1,245 +1,203 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+pageEncoding="UTF-8"%> <%@ taglib prefix="c"
+uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Đăng nhập - UTE Phone Hub</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/main.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/components/header.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
-    <!-- Header -->
-    <header class="header">
-        <div class="header-main">
-            <div class="header-content">
-                <a href="${pageContext.request.contextPath}/" class="logo">
-                    <div class="logo-icon">U</div>
-                    <span>UTE Phone Hub</span>
-                </a>
-                <div class="header-actions">
-                    <a href="${pageContext.request.contextPath}/" class="btn btn-secondary">
-                        <i class="fas fa-home"></i>
-                        Trang chủ
-                    </a>
-                </div>
-            </div>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/static/favicon.png">
+    <link rel="shortcut icon" type="image/png" href="${pageContext.request.contextPath}/static/favicon.png">
+
+    <!-- CSS -->
+    <link
+      rel="stylesheet"
+      href="${pageContext.request.contextPath}/static/css/components/auth.css"
+    />
+
+    <!-- Boxicons -->
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Favicon -->
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="${pageContext.request.contextPath}/static/images/favicon.ico"
+    />
+  </head>
+  <body>
+    <!-- Back to Home Link -->
+    <div class="back-to-home">
+      <a href="${pageContext.request.contextPath}/">
+        <i class="bx bx-arrow-back"></i>
+        Về trang chủ
+      </a>
+    </div>
+
+    <div class="container">
+      <!-- Login Form -->
+      <div class="form-box login">
+        <form id="loginForm">
+          <h1>Đăng nhập</h1>
+
+          <div class="input-box">
+            <input
+              type="text"
+              id="username"
+              name="username"
+              placeholder="Tên đăng nhập hoặc email"
+              required
+            />
+            <i class="bx bxs-user"></i>
+          </div>
+
+          <div class="input-box">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Mật khẩu"
+              required
+            />
+            <i class="bx bxs-lock-alt"></i>
+          </div>
+
+          <div class="forgot-link">
+            <a
+              href="${pageContext.request.contextPath}/api/v1/auth/forgot-password"
+              >Quên mật khẩu?</a
+            >
+          </div>
+
+          <button type="submit" class="btn">Đăng nhập</button>
+
+          <div
+            class="error-message"
+            id="errorMessage"
+            style="display: none"
+          ></div>
+          <div
+            class="success-message"
+            id="successMessage"
+            style="display: none"
+          ></div>
+
+          <p>hoặc đăng nhập với</p>
+          <div class="social-icons">
+            <a href="#"><i class="bx bxl-google"></i></a>
+            <a href="#"><i class="bx bxl-facebook"></i></a>
+            <a href="#"><i class="bx bxl-github"></i></a>
+            <a href="#"><i class="bx bxl-linkedin"></i></a>
+          </div>
+        </form>
+      </div>
+
+      <!-- Register Form -->
+      <div class="form-box register">
+        <form id="registerForm">
+          <h1>Đăng ký</h1>
+
+          <div class="input-box">
+            <input
+              type="text"
+              id="regUsername"
+              name="username"
+              placeholder="Tên đăng nhập"
+              required
+            />
+            <i class="bx bxs-user"></i>
+          </div>
+
+          <div class="input-box">
+            <input
+              type="text"
+              id="regFullName"
+              name="fullName"
+              placeholder="Họ và tên"
+              required
+            />
+            <i class="bx bxs-user-detail"></i>
+          </div>
+
+          <div class="input-box">
+            <input
+              type="email"
+              id="regEmail"
+              name="email"
+              placeholder="Email"
+              required
+            />
+            <i class="bx bxs-envelope"></i>
+          </div>
+
+          <div class="input-box">
+            <input
+              type="password"
+              id="regPassword"
+              name="password"
+              placeholder="Mật khẩu"
+              required
+            />
+            <i class="bx bxs-lock-alt"></i>
+          </div>
+
+          <div class="input-box">
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              placeholder="Xác nhận mật khẩu"
+              required
+            />
+            <i class="bx bxs-lock-alt"></i>
+          </div>
+
+          <button type="submit" class="btn">Đăng ký</button>
+
+          <div
+            class="error-message"
+            id="regErrorMessage"
+            style="display: none"
+          ></div>
+          <div
+            class="success-message"
+            id="regSuccessMessage"
+            style="display: none"
+          ></div>
+
+          <p>hoặc đăng ký với</p>
+          <div class="social-icons">
+            <a href="#"><i class="bx bxl-google"></i></a>
+            <a href="#"><i class="bx bxl-facebook"></i></a>
+            <a href="#"><i class="bx bxl-github"></i></a>
+            <a href="#"><i class="bx bxl-linkedin"></i></a>
+          </div>
+        </form>
+      </div>
+
+      <!-- Toggle Panel -->
+      <div class="toggle-box">
+        <div class="toggle-panel toggle-left">
+          <h1>Xin chào!</h1>
+          <p>Chưa có tài khoản?</p>
+          <button class="btn register-btn">Đăng ký</button>
         </div>
-    </header>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <div class="auth-container">
-            <div class="auth-card">
-                <div class="auth-header">
-                    <h1>Đăng nhập</h1>
-                    <p>Chào mừng bạn quay trở lại!</p>
-                </div>
-                
-                <form class="auth-form" id="loginForm">
-                    <div class="form-group">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" id="email" name="email" class="form-control" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="password" class="form-label">Mật khẩu</label>
-                        <div class="password-input">
-                            <input type="password" id="password" name="password" class="form-control" required>
-                            <button type="button" class="password-toggle" onclick="togglePassword()">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="rememberMe" name="rememberMe">
-                            <span class="checkmark"></span>
-                            Ghi nhớ đăng nhập
-                        </label>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary btn-lg w-100">
-                        <i class="fas fa-sign-in-alt"></i>
-                        Đăng nhập
-                    </button>
-                </form>
-                
-                <div class="auth-footer">
-                    <p>Chưa có tài khoản? <a href="${pageContext.request.contextPath}/auth/register">Đăng ký ngay</a></p>
-                    <p><a href="${pageContext.request.contextPath}/auth/forgot-password">Quên mật khẩu?</a></p>
-                </div>
-            </div>
+        <div class="toggle-panel toggle-right">
+          <h1>Chào mừng trở lại!</h1>
+          <p>Đã có tài khoản?</p>
+          <button class="btn login-btn">Đăng nhập</button>
         </div>
-    </main>
+      </div>
+    </div>
 
-    <style>
-        .auth-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 80vh;
-            padding: 20px;
-        }
-        
-        .auth-card {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-            padding: 40px;
-            width: 100%;
-            max-width: 400px;
-        }
-        
-        .auth-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .auth-header h1 {
-            font-size: 2rem;
-            font-weight: 800;
-            color: #333;
-            margin-bottom: 10px;
-        }
-        
-        .auth-header p {
-            color: #666;
-            font-size: 1rem;
-        }
-        
-        .auth-form {
-            margin-bottom: 30px;
-        }
-        
-        .password-input {
-            position: relative;
-        }
-        
-        .password-toggle {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: #666;
-            cursor: pointer;
-            padding: 5px;
-        }
-        
-        .checkbox-label {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            font-size: 14px;
-            color: #666;
-        }
-        
-        .checkbox-label input[type="checkbox"] {
-            display: none;
-        }
-        
-        .checkmark {
-            width: 20px;
-            height: 20px;
-            border: 2px solid #e0e0e0;
-            border-radius: 4px;
-            margin-right: 10px;
-            position: relative;
-            transition: all 0.3s;
-        }
-        
-        .checkbox-label input[type="checkbox"]:checked + .checkmark {
-            background: #ff6b35;
-            border-color: #ff6b35;
-        }
-        
-        .checkbox-label input[type="checkbox"]:checked + .checkmark::after {
-            content: '✓';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        
-        .auth-footer {
-            text-align: center;
-        }
-        
-        .auth-footer p {
-            margin-bottom: 10px;
-            color: #666;
-        }
-        
-        .auth-footer a {
-            color: #ff6b35;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        
-        .auth-footer a:hover {
-            text-decoration: underline;
-        }
-    </style>
-
-    <script>
-        function togglePassword() {
-            const passwordInput = document.getElementById('password');
-            const toggleBtn = document.querySelector('.password-toggle i');
-            
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                toggleBtn.classList.remove('fa-eye');
-                toggleBtn.classList.add('fa-eye-slash');
-            } else {
-                passwordInput.type = 'password';
-                toggleBtn.classList.remove('fa-eye-slash');
-                toggleBtn.classList.add('fa-eye');
-            }
-        }
-        
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            const loginData = {
-                email: formData.get('email'),
-                password: formData.get('password'),
-                rememberMe: formData.get('rememberMe') === 'on'
-            };
-            
-            fetch('${pageContext.request.contextPath}/api/v1/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(loginData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    localStorage.setItem('token', data.data.token);
-                    localStorage.setItem('user', JSON.stringify(data.data.user));
-                    showNotification('Đăng nhập thành công!', 'success');
-                    setTimeout(() => {
-                        window.location.href = '${pageContext.request.contextPath}/';
-                    }, 1000);
-                } else {
-                    showNotification(data.message || 'Đăng nhập thất bại!', 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showNotification('Có lỗi xảy ra!', 'error');
-            });
-        });
-    </script>
-</body>
+    <!-- JavaScript -->
+    <script src="${pageContext.request.contextPath}/static/js/auth.js"></script>
+  </body>
 </html>

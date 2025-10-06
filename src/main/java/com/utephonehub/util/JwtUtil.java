@@ -17,7 +17,7 @@ public class JwtUtil {
     private static final Logger logger = LogManager.getLogger(JwtUtil.class);
     
     // JWT Configuration
-    private static final String SECRET_KEY = "ute-phone-hub-super-secret-key-for-jwt-token-generation-2025";
+    private static final String SECRET_KEY = "ute-phone-hub-super-secret-key-for-jwt-token-generation-2025-secure";
     private static final long EXPIRATION_TIME = 24 * 60 * 60 * 1000; // 24 hours
     private static final long REFRESH_EXPIRATION_TIME = 7 * 24 * 60 * 60 * 1000; // 7 days
     

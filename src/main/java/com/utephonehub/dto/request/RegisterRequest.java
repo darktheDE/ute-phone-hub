@@ -10,6 +10,10 @@ import jakarta.validation.constraints.Size;
  */
 public class RegisterRequest {
     
+    @NotBlank(message = "Tên đăng nhập không được để trống")
+    @Size(min = 3, max = 50, message = "Tên đăng nhập phải từ 3-50 ký tự")
+    private String username;
+    
     @NotBlank(message = "Họ và tên không được để trống")
     @Size(max = 100, message = "Họ và tên không được quá 100 ký tự")
     private String fullName;
@@ -26,13 +30,22 @@ public class RegisterRequest {
     // Constructors
     public RegisterRequest() {}
     
-    public RegisterRequest(String fullName, String email, String password) {
+    public RegisterRequest(String username, String fullName, String email, String password) {
+        this.username = username;
         this.fullName = fullName;
         this.email = email;
         this.password = password;
     }
     
     // Getters and Setters
+    public String getUsername() {
+        return username;
+    }
+    
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    
     public String getFullName() {
         return fullName;
     }

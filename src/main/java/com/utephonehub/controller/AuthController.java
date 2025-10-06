@@ -40,6 +40,32 @@ public class AuthController extends HttpServlet {
     }
     
     @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        
+        String pathInfo = request.getPathInfo();
+        logger.info("AuthController GET request: {}", pathInfo);
+        
+        try {
+            switch (pathInfo) {
+                case "/login":
+                    // Forward to login page
+                    request.getRequestDispatcher("/WEB-INF/views/auth/login.jsp").forward(request, response);
+                    break;
+                case "/register":
+                    // Forward to register page (you can create this later)
+                    request.getRequestDispatcher("/WEB-INF/views/auth/register.jsp").forward(request, response);
+                    break;
+                default:
+                    sendErrorResponse(response, HttpServletResponse.SC_NOT_FOUND, "Page not found");
+            }
+        } catch (Exception e) {
+            logger.error("Error in doGet", e);
+            sendErrorResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error");
+        }
+    }
+    
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
@@ -92,7 +118,7 @@ public class AuthController extends HttpServlet {
                 logger.warn("Business error in register: {}", e.getMessage());
                 sendErrorResponse(response, HttpServletResponse.SC_CONFLICT, e.getMessage());
             } else {
-                logger.error("Unexpected error in register", e);
+                logger.error("Unexpected error in register: " + e.getMessage(), e);
                 sendErrorResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Đã xảy ra lỗi hệ thống");
             }
         }
@@ -127,7 +153,7 @@ public class AuthController extends HttpServlet {
                 logger.warn("Business error in login: {}", e.getMessage());
                 sendErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
             } else {
-                logger.error("Unexpected error in login", e);
+                logger.error("Unexpected error in login: " + e.getMessage(), e);
                 sendErrorResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Đã xảy ra lỗi hệ thống");
             }
         }

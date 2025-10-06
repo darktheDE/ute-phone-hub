@@ -2,8 +2,6 @@
 -- This script creates the database schema and initial data
 
 -- Create custom enum types
-CREATE TYPE user_role AS ENUM ('customer', 'admin');
-CREATE TYPE user_status AS ENUM ('active', 'locked', 'pending');
 CREATE TYPE order_status AS ENUM ('pending', 'processing', 'shipped', 'delivered', 'cancelled');
 CREATE TYPE payment_method AS ENUM ('COD', 'bank_transfer', 'credit_card');
 CREATE TYPE discount_type AS ENUM ('percentage', 'fixed_amount');
@@ -12,12 +10,13 @@ CREATE TYPE voucher_status AS ENUM ('active', 'inactive', 'expired');
 -- Create tables
 CREATE TABLE IF NOT EXISTS users (
     id BIGSERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
     full_name VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     phone_number VARCHAR(20),
-    role user_role NOT NULL DEFAULT 'customer',
-    status user_status NOT NULL DEFAULT 'active',
+    role VARCHAR(20) NOT NULL DEFAULT 'customer',
+    status VARCHAR(20) NOT NULL DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -195,8 +194,8 @@ INSERT INTO vouchers (code, discount_type, discount_value, max_usage, min_order_
 ON CONFLICT DO NOTHING;
 
 -- Create admin user (password: AdminPassword123!)
-INSERT INTO users (full_name, email, password_hash, role, status) VALUES 
-('Admin User', 'admin@utephonehub.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/8Kz8KzK', 'admin', 'active')
+INSERT INTO users (username, full_name, email, password_hash, role, status) VALUES 
+('admin', 'Admin User', 'admin@utephonehub.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/8Kz8KzK', 'admin', 'active')
 ON CONFLICT (email) DO NOTHING;
 
 -- Create sample products

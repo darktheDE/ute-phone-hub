@@ -71,6 +71,10 @@ public class DatabaseConfig {
             em = entityManagerFactory.createEntityManager();
             entityManagerThreadLocal.set(em);
             logger.debug("Created new EntityManager for thread: {}", Thread.currentThread().getName());
+        } else {
+            // Clear cache để tránh stale data
+            em.clear();
+            logger.debug("Cleared EntityManager cache for thread: {}", Thread.currentThread().getName());
         }
         return em;
     }

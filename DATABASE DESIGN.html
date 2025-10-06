@@ -1,0 +1,711 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>#2: DATABASE DESIGN</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(134, 131, 126, 1);
+	fill: rgba(134, 131, 126, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(63, 126, 190, 1);
+	fill: rgba(63, 126, 190, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 111, 200, 0.09);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(134, 131, 126, 1);
+	fill: rgba(134, 131, 126, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(63, 126, 190, 1);
+	fill: rgba(63, 126, 190, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(232, 242, 250, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 99, 174, 0.172); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="25c996bd-0744-806c-97a1-c2277316604b" class="page sans"><header><div class="page-header-icon undefined"><img class="icon notion-static-icon" src="https://www.notion.so/icons/document_red.svg"/></div><h1 class="page-title"><strong>#2: DATABASE DESIGN</strong></h1><p class="page-description"></p><table class="properties"><tbody><tr class="property-row property-row-created_by"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/user-circle_gray.svg" style="width:14px;height:14px;display:block"/></span>Created by</th><td><span class="user"><img src="IMG_4253.jpg" class="icon user-icon"/>Đỗ Kiến Hưng</span></td></tr><tr class="property-row property-row-created_time"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/clock_gray.svg" style="width:14px;height:14px;display:block"/></span>Created time</th><td><time>@28 tháng 8, 2025 0:23</time></td></tr><tr class="property-row property-row-last_edited_by"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/user-circle_gray.svg" style="width:14px;height:14px;display:block"/></span>Last edited by</th><td><span class="user"><img src="IMG_4253.jpg" class="icon user-icon"/>Đỗ Kiến Hưng</span></td></tr><tr class="property-row property-row-last_edited_time"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/clock_gray.svg" style="width:14px;height:14px;display:block"/></span>Last updated time</th><td><time>@21 tháng 9, 2025 22:01</time></td></tr></tbody></table></header><div class="page-body"><p id="a65969f5-ba6c-4da6-977c-6a5efae9759f" class=""><strong>Tên dự án:</strong> <strong>UTE-PhoneHub<br/>Hệ quản trị CSDL:</strong> PostgreSQL<br/><strong>Phiên bản:</strong> 1.4<br/><strong>Ngày tạo:</strong> 21/09/2025<br/><strong>Người tạo:</strong> Đỗ Kiến Hưng</p><hr id="fed61fa0-ffdd-46bf-8a29-b33e3cdd5084"/><h3 id="38bd9112-29cd-4d90-93a4-8aa201e14bed" class=""><strong>Lịch sử thay đổi</strong></h3><ul id="5c1f6a3d-6a3e-49c2-8b20-12dde984febb" class="bulleted-list"><li style="list-style-type:disc"><strong>v1.4 (21/09/2025):</strong><ul id="54b3e483-e96e-4bc8-bb04-fe2a4a9604f1" class="bulleted-list"><li style="list-style-type:circle"><strong>Bổ sung bảng review_likes</strong> để hỗ trợ chức năng &quot;Thích&quot; đánh giá, theo yêu cầu từ SRS v1.4.</li></ul></li></ul><ul id="02102759-535f-4957-947b-fcd867d519ce" class="bulleted-list"><li style="list-style-type:disc"><strong>v1.3 (21/09/2025):</strong><ul id="b9f00c2d-3624-4ded-babf-db154f39ca6d" class="bulleted-list"><li style="list-style-type:circle"><strong>Đảm bảo toàn vẹn dữ liệu:</strong> Thay đổi các ràng buộc <code>ON DELETE CASCADE</code> không an toàn thành <code>ON DELETE RESTRICT</code> trên các bảng quan trọng (<code>brands</code>, <code>products</code>, <code>order_items</code>) để ngăn ngừa mất mát dữ liệu lịch sử.</li></ul><ul id="6e6ceb88-bdab-4f87-82b5-e1ca94c69731" class="bulleted-list"><li style="list-style-type:circle"><strong>Loại bỏ chức năng ngoài phạm vi:</strong> Xóa bỏ bảng <code>review_like</code> không được định nghĩa trong SRS.</li></ul><ul id="f24b1bb3-9c35-40d9-a62c-e97c94187264" class="bulleted-list"><li style="list-style-type:circle"><strong>Sửa lỗi định nghĩa:</strong> Loại bỏ dòng thừa trong bảng <code>reviews</code>.</li></ul></li></ul><ul id="e82aad47-e586-4e28-a737-9a1df789c360" class="bulleted-list"><li style="list-style-type:disc"><strong>v1.2 (15/09/2025):</strong><ul id="b3ac64ad-5214-4ff5-ae0d-2714dad5b442" class="bulleted-list"><li style="list-style-type:circle">Cập nhật Bảng <code>orders</code>: Cho phép cột <code>user_id</code> nhận giá trị <code>NULL</code> để hỗ trợ &quot;Guest Checkout&quot;. Bổ sung cột <code>email</code> để liên lạc và tra cứu đơn hàng cho khách.</li></ul><ul id="f094cc32-0158-4b18-964f-9a53a0b0a170" class="bulleted-list"><li style="list-style-type:circle">Bổ sung cơ chế Xóa mềm (Soft Delete): Thêm cột <code>status</code> vào bảng <code>products</code> và cập nhật kiểu <code>user_status</code> để hỗ trợ vô hiệu hóa thay vì xóa vĩnh viễn.</li></ul><ul id="49fe9e94-29d8-4ab0-91c4-fb3bc3a9b4fc" class="bulleted-list"><li style="list-style-type:circle">Bổ sung mục Chỉ mục (Indexes): Đề xuất các chỉ mục cần thiết để tối ưu hóa hiệu năng truy vấn.</li></ul><ul id="ce61e334-5399-4fd8-b8fb-d1626140a854" class="bulleted-list"><li style="list-style-type:circle">Cập nhật các mô tả để làm rõ ý nghĩa của các trạng thái.</li></ul></li></ul><hr id="dcc9420a-a8af-4147-84ac-adfaa3f4439e"/><h3 id="93398921-3f13-4b92-87eb-14bdf10e4090" class=""><strong>1. Mục đích</strong></h3><p id="5ea0bc60-d211-469c-9284-1e2cc293025b" class="">Tài liệu này định nghĩa cấu trúc logic của cơ sở dữ liệu cho dự án UTE-PhoneHub. Nó bao gồm các thực thể (bảng), các thuộc tính (cột), các kiểu dữ liệu, và các mối quan hệ giữa chúng. Đây là tài liệu tham chiếu chính cho các lập trình viên backend.</p><h3 id="c43b7338-40cf-4e51-9fa3-60fcd4b41624" class=""><strong>2. Quy ước đặt tên</strong></h3><ul id="095921da-fbec-45c5-bf88-6d05a7662826" class="bulleted-list"><li style="list-style-type:disc"><strong>Tên bảng (Table):</strong> Dùng chữ thường, dạng số nhiều, <code>snake_case</code>. Ví dụ: <code>products</code>, <code>order_items</code>.</li></ul><ul id="9ff99f2b-dfd2-4d5c-81b3-9f5b354f7c4e" class="bulleted-list"><li style="list-style-type:disc"><strong>Tên cột (Column):</strong> Dùng chữ thường, <code>snake_case</code>. Ví dụ: <code>full_name</code>, <code>created_at</code>.</li></ul><ul id="e8e66e30-0764-4347-89cd-92e1f78a543f" class="bulleted-list"><li style="list-style-type:disc"><strong>Khóa chính (Primary Key):</strong> Luôn đặt tên là <code>id</code>.</li></ul><ul id="2e91ce37-5128-4b8e-a619-c66d13543a0a" class="bulleted-list"><li style="list-style-type:disc"><strong>Khóa ngoại (Foreign Key):</strong> Cú pháp <code>&lt;tên_bảng_tham_chiếu_số_ít&gt;_id</code>. Ví dụ: <code>user_id</code> trong bảng <code>orders</code>.</li></ul><h3 id="e46151c5-3f0d-4bf2-ae71-7e2011c935a5" class=""><strong>3. Sơ đồ Quan hệ Thực thể (ERD)</strong></h3><ul id="91683ea7-53eb-40b2-9e1b-c2d02698dc4b" class="bulleted-list"><li style="list-style-type:disc"><code>users</code> (1) ---&lt; (n) <code>orders</code></li></ul><ul id="576ed33f-39d8-4d99-a465-3e80a45d8eac" class="bulleted-list"><li style="list-style-type:disc"><code>users</code> (1) ---&lt; (n) <code>reviews</code></li></ul><ul id="b2a30ac4-fc6b-45f5-80fe-d62de046292c" class="bulleted-list"><li style="list-style-type:disc"><code>users</code> (1) ---&lt; (n) <code>addresses</code></li></ul><ul id="6bd8e439-3b44-4185-85a0-ff21c8d919cf" class="bulleted-list"><li style="list-style-type:disc"><code>users</code> (1) --- (1) <code>carts</code></li></ul><ul id="e2209848-bafd-4f90-a269-bfa7006bc14a" class="bulleted-list"><li style="list-style-type:disc"><code>categories</code> (1) ---&lt; (n) <code>products</code></li></ul><ul id="47d0412d-f211-4eed-ba7b-04f854e38352" class="bulleted-list"><li style="list-style-type:disc"><code>brands</code> (1) ---&lt; (n) <code>products</code></li></ul><ul id="476a583e-8a74-43f7-9f4a-a71dd7ef4b73" class="bulleted-list"><li style="list-style-type:disc"><code>products</code> (1) ---&lt; (n) <code>reviews</code></li></ul><ul id="72091d8f-2d83-4fa0-b72f-152e3746452e" class="bulleted-list"><li style="list-style-type:disc"><code>products</code> (1) ---&lt; (n) <code>product_images</code></li></ul><ul id="9090fb16-1377-4003-b9cb-90daf784febc" class="bulleted-list"><li style="list-style-type:disc"><code>products</code> (n) --- (n) <code>orders</code> (Thông qua <code>order_items</code>)</li></ul><ul id="d09824b6-e6ba-4a93-ae61-d2202304470d" class="bulleted-list"><li style="list-style-type:disc"><code>products</code> (n) --- (n) <code>carts</code> (Thông qua <code>cart_items</code>)</li></ul><ul id="2d2ffdf6-e4f6-46aa-9461-efaf45a04ea6" class="bulleted-list"><li style="list-style-type:disc"><code>orders</code> (1) ---&lt; (n) <code>order_items</code></li></ul><ul id="470720ca-267f-495f-8edd-db9d8d4dfc80" class="bulleted-list"><li style="list-style-type:disc"><code>carts</code> (1) ---&lt; (n) <code>cart_items</code></li></ul><ul id="a4d46453-5a69-45e3-a1a2-e9d33254e6ea" class="bulleted-list"><li style="list-style-type:disc"><code>vouchers</code> (1) ---&lt; (n) <code>orders</code></li></ul><ul id="275996bd-0744-80d3-84c6-dea6d4dadef3" class="bulleted-list"><li style="list-style-type:disc"><code><strong>users </strong></code><strong>(1) ---&lt; (n) </strong><code><strong>review_likes</strong></code></li></ul><ul id="275996bd-0744-80ab-ab0e-e83b06cf1f97" class="bulleted-list"><li style="list-style-type:disc"><code><strong>reviews </strong></code><strong>(1) ---&lt; (n) </strong><code><strong>review_likes</strong></code></li></ul><h3 id="45d845f9-4844-4cfe-b240-588eab767044" class=""><strong>4. Mô tả chi tiết các bảng (Table Definitions)</strong></h3><p id="f699afe9-7c25-493c-945e-fcdd9202e4d5" class=""><strong>Kiểu dữ liệu Enum tùy chỉnh (Custom Enum Types)</strong></p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="e7c920d2-197e-4cac-a1d2-1f106737ceb3" class="code code-wrap"><code class="language-SQL" style="white-space:pre-wrap;word-break:break-all">CREATE TYPE user_role AS ENUM (&#x27;customer&#x27;, &#x27;admin&#x27;);
+CREATE TYPE user_status AS ENUM (&#x27;active&#x27;, &#x27;locked&#x27;, &#x27;disabled&#x27;);
+CREATE TYPE order_status AS ENUM (&#x27;pending&#x27;, &#x27;processing&#x27;, &#x27;shipped&#x27;, &#x27;completed&#x27;, &#x27;cancelled&#x27;);
+CREATE TYPE discount_type AS ENUM (&#x27;percentage&#x27;, &#x27;fixed_amount&#x27;);
+</code></pre><hr id="60e1450a-ab65-4a38-9176-5f677b753865"/><p id="74afb872-73ed-414b-8e6c-dde28eab5b64" class=""><strong>1. Bảng </strong><code><strong>users</strong></code></p><table id="6acb40a6-0af8-4146-95cf-b44d97be42ce" class="simple-table"><thead class="simple-table-header"><tr id="cc757463-ca46-45df-96a8-63d42e8b990b"><th id="A[d_" class="simple-table-header-color simple-table-header">Tên cột</th><th id="r`ZD" class="simple-table-header-color simple-table-header">Kiểu dữ liệu</th><th id="DFf_" class="simple-table-header-color simple-table-header">Ràng buộc</th><th id="iL&gt;g" class="simple-table-header-color simple-table-header">Mô tả</th></tr></thead><tbody><tr id="4782947a-d376-47dc-a51c-064e113ffc23"><td id="A[d_" class=""><code>id</code></td><td id="r`ZD" class=""><code>SERIAL</code></td><td id="DFf_" class=""><code>PRIMARY KEY</code></td><td id="iL&gt;g" class="">ID định danh duy nhất</td></tr><tr id="10517646-8c78-492e-b240-3dd33df32679"><td id="A[d_" class=""><code>full_name</code></td><td id="r`ZD" class=""><code>VARCHAR(100)</code></td><td id="DFf_" class=""><code>NOT NULL</code></td><td id="iL&gt;g" class="">Họ và tên người dùng</td></tr><tr id="e27f95ed-6f8d-484c-9ca1-57f7e59a4b95"><td id="A[d_" class=""><code>email</code></td><td id="r`ZD" class=""><code>VARCHAR(100)</code></td><td id="DFf_" class=""><code>NOT NULL, UNIQUE</code></td><td id="iL&gt;g" class="">Email dùng để đăng nhập</td></tr><tr id="9525b70d-cb90-4235-b77a-77ee55706308"><td id="A[d_" class=""><code>password_hash</code></td><td id="r`ZD" class=""><code>VARCHAR(255)</code></td><td id="DFf_" class=""><code>NOT NULL</code></td><td id="iL&gt;g" class="">Mật khẩu đã được băm</td></tr><tr id="a712a923-3774-428f-bb5e-5ffde68d80f6"><td id="A[d_" class=""><code>phone_number</code></td><td id="r`ZD" class=""><code>VARCHAR(20)</code></td><td id="DFf_" class=""></td><td id="iL&gt;g" class="">Số điện thoại</td></tr><tr id="1f68177d-7d6a-4f34-8854-e2ab00a0eda6"><td id="A[d_" class=""><code>role</code></td><td id="r`ZD" class=""><code>user_role</code></td><td id="DFf_" class=""><code>NOT NULL, DEFAULT &#x27;customer&#x27;</code></td><td id="iL&gt;g" class="">Vai trò (customer hoặc admin)</td></tr><tr id="ede45d60-862e-41aa-95ac-5c63e3533da6"><td id="A[d_" class=""><code>status</code></td><td id="r`ZD" class=""><code>user_status</code></td><td id="DFf_" class=""><code>NOT NULL, DEFAULT &#x27;active&#x27;</code></td><td id="iL&gt;g" class="">Trạng thái tài khoản (active, locked, disabled)</td></tr><tr id="b62fb8ed-d787-44d1-bf32-083d41ed0da5"><td id="A[d_" class=""><code>created_at</code></td><td id="r`ZD" class=""><code>TIMESTAMP WITH TIME ZONE</code></td><td id="DFf_" class=""><code>DEFAULT NOW()</code></td><td id="iL&gt;g" class="">Thời gian tạo tài khoản</td></tr><tr id="55968153-865a-40ce-a949-5b0c92758435"><td id="A[d_" class=""><code>updated_at</code></td><td id="r`ZD" class=""><code>TIMESTAMP WITH TIME ZONE</code></td><td id="DFf_" class=""><code>DEFAULT NOW()</code></td><td id="iL&gt;g" class="">Thời gian cập nhật lần cuối</td></tr></tbody></table><p id="09c7db25-155a-4b66-9777-55fe2b6f2852" class=""><strong>2. Bảng </strong><code><strong>categories</strong></code></p><table id="a49ce2bd-e39b-4856-bab3-be11981d4e51" class="simple-table"><thead class="simple-table-header"><tr id="0155c6c1-a9ed-447b-8e30-41feac3f2ec8"><th id="Nt~w" class="simple-table-header-color simple-table-header">Tên cột</th><th id="tdLk" class="simple-table-header-color simple-table-header">Kiểu dữ liệu</th><th id="IomM" class="simple-table-header-color simple-table-header">Ràng buộc</th><th id="x~[|" class="simple-table-header-color simple-table-header">Mô tả</th></tr></thead><tbody><tr id="d6db7ed4-a4d1-473a-868e-6091d72caecf"><td id="Nt~w" class=""><code>id</code></td><td id="tdLk" class=""><code>SERIAL</code></td><td id="IomM" class=""><code>PRIMARY KEY</code></td><td id="x~[|" class="">ID định danh duy nhất</td></tr><tr id="2569f758-d0bb-4db5-928a-a805fab0a5c8"><td id="Nt~w" class=""><code>name</code></td><td id="tdLk" class=""><code>VARCHAR(100)</code></td><td id="IomM" class=""><code>NOT NULL, UNIQUE</code></td><td id="x~[|" class="">Tên danh mục</td></tr><tr id="7abff8dd-b379-4a0c-9b4a-2bf0a798a3cd"><td id="Nt~w" class=""><code>parent_id</code></td><td id="tdLk" class=""><code>INT</code></td><td id="IomM" class=""><code>FK -&gt; categories(id)</code></td><td id="x~[|" class="">Hỗ trợ menu đa cấp</td></tr><tr id="dc9257dc-1609-46ea-a3be-78167e27f5af"><td id="Nt~w" class=""><code>status</code></td><td id="tdLk" class=""><code>BOOLEAN</code></td><td id="IomM" class=""><code>DEFAULT TRUE</code></td><td id="x~[|" class="">Trạng thái (TRUE = hiển thị, FALSE = đã ẩn/xóa mềm)</td></tr><tr id="ae7b10b2-cf02-4eef-ace5-f3a3c728411a"><td id="Nt~w" class=""><code>created_at</code></td><td id="tdLk" class=""><code>TIMESTAMP</code></td><td id="IomM" class=""><code>DEFAULT CURRENT_TIMESTAMP</code></td><td id="x~[|" class="">Thời điểm tạo</td></tr><tr id="64d8125f-f241-4faa-89f1-86e464c9d026"><td id="Nt~w" class=""><code>updated_at</code></td><td id="tdLk" class=""><code>TIMESTAMP</code></td><td id="IomM" class=""><code>DEFAULT CURRENT_TIMESTAMP</code></td><td id="x~[|" class="">Thời điểm cập nhật</td></tr></tbody></table><p id="692327d8-ef5b-40ab-848e-e30fde26d962" class=""><strong>3. Bảng </strong><code><strong>brands</strong></code></p><table id="b587e2dd-d05c-427e-9731-e31f35f071ee" class="simple-table"><thead class="simple-table-header"><tr id="d5f8561a-cd80-4127-ae08-132b939033a5"><th id="Owt@" class="simple-table-header-color simple-table-header">Tên cột</th><th id="T_y[" class="simple-table-header-color simple-table-header">Kiểu dữ liệu</th><th id="r=LS" class="simple-table-header-color simple-table-header">Ràng buộc</th><th id="ghan" class="simple-table-header-color simple-table-header">Mô tả</th></tr></thead><tbody><tr id="0118149f-11a3-43a8-8ad9-09da0aefb299"><td id="Owt@" class=""><code>id</code></td><td id="T_y[" class=""><code>SERIAL</code></td><td id="r=LS" class=""><code>PRIMARY KEY</code></td><td id="ghan" class="">ID định danh duy nhất</td></tr><tr id="d52b7de0-8a94-430a-9780-a778c17cecba"><td id="Owt@" class=""><code>name</code></td><td id="T_y[" class=""><code>VARCHAR(100)</code></td><td id="r=LS" class=""><code>NOT NULL, UNIQUE</code></td><td id="ghan" class="">Tên thương hiệu</td></tr><tr id="84c55390-a48c-4b57-863a-20b93d71066e"><td id="Owt@" class=""><code>category_id</code></td><td id="T_y[" class=""><code>INT</code></td><td id="r=LS" class=""><code>FK -&gt; categories(id) ON DELETE RESTRICT</code></td><td id="ghan" class=""><strong>(CẬP NHẬT)</strong> Thương hiệu thuộc danh mục nào. Ngăn xóa danh mục nếu còn thương hiệu liên kết.</td></tr><tr id="967e42fe-9a6a-4b5c-822f-a30cd49ba0d7"><td id="Owt@" class=""><code>status</code></td><td id="T_y[" class=""><code>BOOLEAN</code></td><td id="r=LS" class=""><code>DEFAULT TRUE</code></td><td id="ghan" class="">Trạng thái (TRUE = active, FALSE = inactive/xóa mềm)</td></tr><tr id="fc31ea4b-265f-4fb1-8b3d-89cc10a57aad"><td id="Owt@" class=""><code>created_at</code></td><td id="T_y[" class=""><code>TIMESTAMP</code></td><td id="r=LS" class=""><code>DEFAULT CURRENT_TIMESTAMP</code></td><td id="ghan" class="">Thời điểm tạo</td></tr><tr id="c263c678-4b36-46b9-bc26-0b9ac0dc2880"><td id="Owt@" class=""><code>updated_at</code></td><td id="T_y[" class=""><code>TIMESTAMP</code></td><td id="r=LS" class=""><code>DEFAULT CURRENT_TIMESTAMP</code></td><td id="ghan" class="">Thời điểm cập nhật</td></tr><tr id="d08feb21-12c0-402d-8179-4b4cbabbf29f"><td id="Owt@" class=""><code>UNIQUE(name, category_id)</code></td><td id="T_y[" class="">Ràng buộc duy nhất</td><td id="r=LS" class=""></td><td id="ghan" class="">Một thương hiệu không được trùng tên trong cùng một danh mục</td></tr></tbody></table><p id="5fcc7f6e-d2cd-40c3-8add-cefbf35b6bc0" class=""><strong>4. Bảng </strong><code><strong>products</strong></code></p><table id="bbf8b39a-3d90-4b49-a862-ee96d2dc6cf5" class="simple-table"><thead class="simple-table-header"><tr id="9491383e-c908-408f-a4bb-4ab494f579f1"><th id="`;\:" class="simple-table-header-color simple-table-header">Tên cột</th><th id="bGVy" class="simple-table-header-color simple-table-header">Kiểu dữ liệu</th><th id="NAmh" class="simple-table-header-color simple-table-header">Ràng buộc</th><th id="znI|" class="simple-table-header-color simple-table-header">Mô tả</th></tr></thead><tbody><tr id="74594d3c-a91d-49f9-93c4-1695b1344283"><td id="`;\:" class=""><code>id</code></td><td id="bGVy" class=""><code>SERIAL</code></td><td id="NAmh" class=""><code>PRIMARY KEY</code></td><td id="znI|" class="">ID định danh duy nhất</td></tr><tr id="1d641785-ec58-42ef-b9f8-fa8edff71d4d"><td id="`;\:" class=""><code>name</code></td><td id="bGVy" class=""><code>VARCHAR(255)</code></td><td id="NAmh" class=""><code>NOT NULL</code></td><td id="znI|" class="">Tên sản phẩm</td></tr><tr id="e717ff92-0eb0-429a-8876-089b39562e12"><td id="`;\:" class=""><code>description</code></td><td id="bGVy" class=""><code>TEXT</code></td><td id="NAmh" class=""></td><td id="znI|" class="">Mô tả chi tiết sản phẩm</td></tr><tr id="8c2ef887-75b0-427d-965f-0ba19b29a7da"><td id="`;\:" class=""><code>price</code></td><td id="bGVy" class=""><code>DECIMAL(12, 2)</code></td><td id="NAmh" class=""><code>NOT NULL</code></td><td id="znI|" class="">Giá bán gốc</td></tr><tr id="b6ca3a74-7b33-4a00-9372-2026c7e36c77"><td id="`;\:" class=""><code>stock_quantity</code></td><td id="bGVy" class=""><code>INT</code></td><td id="NAmh" class=""><code>NOT NULL, DEFAULT 0</code></td><td id="znI|" class="">Số lượng tồn kho</td></tr><tr id="835a573c-6940-445e-bd3e-adf59c5b79b6"><td id="`;\:" class=""><code>category_id</code></td><td id="bGVy" class=""><code>INT</code></td><td id="NAmh" class=""><code>FOREIGN KEY (categories.id) ON DELETE RESTRICT</code></td><td id="znI|" class=""><strong>(CẬP NHẬT)</strong> ID của danh mục. Ngăn xóa danh mục nếu còn sản phẩm.</td></tr><tr id="74a4ee74-2f4f-47d5-bdaf-b1c379f06b89"><td id="`;\:" class=""><code>brand_id</code></td><td id="bGVy" class=""><code>INT</code></td><td id="NAmh" class=""><code>FOREIGN KEY (brands.id) ON DELETE RESTRICT</code></td><td id="znI|" class=""><strong>(CẬP NHẬT)</strong> ID của thương hiệu. Ngăn xóa thương hiệu nếu còn sản phẩm.</td></tr><tr id="5a12dd91-3d55-425d-a867-df915562f27f"><td id="`;\:" class=""><code>specifications</code></td><td id="bGVy" class=""><code>JSONB</code></td><td id="NAmh" class=""></td><td id="znI|" class="">Thông số kỹ thuật (dạng JSON)</td></tr><tr id="a5f1635a-7caa-460b-8bfc-9ea34fbcbeb5"><td id="`;\:" class=""><code>status</code></td><td id="bGVy" class=""><code>BOOLEAN</code></td><td id="NAmh" class=""><code>DEFAULT TRUE</code></td><td id="znI|" class="">Trạng thái hiển thị (TRUE = active, FALSE = inactive/xóa mềm)</td></tr><tr id="30b34742-9bdf-49e3-9482-03ebe6405621"><td id="`;\:" class=""><code>created_at</code></td><td id="bGVy" class=""><code>TIMESTAMP WITH TIME ZONE</code></td><td id="NAmh" class=""><code>DEFAULT NOW()</code></td><td id="znI|" class=""></td></tr><tr id="b3dbd7fa-d09b-40f9-8c2d-b2c5494e7834"><td id="`;\:" class=""><code>updated_at</code></td><td id="bGVy" class=""><code>TIMESTAMP WITH TIME ZONE</code></td><td id="NAmh" class=""><code>DEFAULT NOW()</code></td><td id="znI|" class=""></td></tr></tbody></table><p id="2fa6ee72-6ee0-4961-b085-33cac32236be" class=""><strong>5. Bảng </strong><code><strong>product_images</strong></code></p><table id="a2e65cb7-bc78-4549-bdf0-f77bddcfc521" class="simple-table"><thead class="simple-table-header"><tr id="bc827b33-3277-48cc-8fb9-14f71d004541"><th id="XvJx" class="simple-table-header-color simple-table-header">Tên cột</th><th id="eBsy" class="simple-table-header-color simple-table-header">Kiểu dữ liệu</th><th id="Kn?P" class="simple-table-header-color simple-table-header">Ràng buộc</th><th id="Xatb" class="simple-table-header-color simple-table-header">Mô tả</th></tr></thead><tbody><tr id="f60b0191-2511-466c-98b6-856021f6cfed"><td id="XvJx" class=""><code>id</code></td><td id="eBsy" class=""><code>SERIAL</code></td><td id="Kn?P" class=""><code>PRIMARY KEY</code></td><td id="Xatb" class="">ID định danh duy nhất</td></tr><tr id="cb4b11a0-1c6b-489a-a7a7-10eba88335d4"><td id="XvJx" class=""><code>product_id</code></td><td id="eBsy" class=""><code>INT</code></td><td id="Kn?P" class=""><code>NOT NULL, FOREIGN KEY (products.id) ON DELETE CASCADE</code></td><td id="Xatb" class="">ID sản phẩm sở hữu ảnh này. Xóa ảnh khi sản phẩm bị xóa.</td></tr><tr id="b4cf7403-ff37-4799-9742-efbeb602cd01"><td id="XvJx" class=""><code>image_url</code></td><td id="eBsy" class=""><code>VARCHAR(255)</code></td><td id="Kn?P" class=""><code>NOT NULL</code></td><td id="Xatb" class="">Đường dẫn đến file ảnh</td></tr><tr id="17aa19b6-11ac-40c8-a2de-42874e074c02"><td id="XvJx" class=""><code>is_thumbnail</code></td><td id="eBsy" class=""><code>BOOLEAN</code></td><td id="Kn?P" class=""><code>DEFAULT FALSE</code></td><td id="Xatb" class="">Đánh dấu ảnh đại diện</td></tr><tr id="7ece0f4d-e8bd-419a-ae65-c0c0cda47408"><td id="XvJx" class=""><code>display_order</code></td><td id="eBsy" class=""><code>INT</code></td><td id="Kn?P" class=""><code>NOT NULL, DEFAULT 0</code></td><td id="Xatb" class="">Thứ tự hiển thị ảnh</td></tr></tbody></table><p id="8475ba9b-9054-4b4f-9a0d-db19e4877ab2" class=""><strong>6. Bảng </strong><code><strong>orders</strong></code></p><table id="43d6f856-0504-4973-9b37-560fd1fcc74b" class="simple-table"><thead class="simple-table-header"><tr id="fdf607e0-1034-4481-8f06-9e36f3549944"><th id="v~Fr" class="simple-table-header-color simple-table-header">Tên cột</th><th id="]FYE" class="simple-table-header-color simple-table-header">Kiểu dữ liệu</th><th id=";yK&lt;" class="simple-table-header-color simple-table-header">Ràng buộc</th><th id="yLrB" class="simple-table-header-color simple-table-header">Mô tả</th></tr></thead><tbody><tr id="f09cf1c0-96f5-4033-a8c7-7f13508f6604"><td id="v~Fr" class=""><code>id</code></td><td id="]FYE" class=""><code>SERIAL</code></td><td id=";yK&lt;" class=""><code>PRIMARY KEY</code></td><td id="yLrB" class="">ID định danh duy nhất</td></tr><tr id="628ff47f-a779-4775-9f2b-bf3717c06b9c"><td id="v~Fr" class=""><code>user_id</code></td><td id="]FYE" class=""><code>INT</code></td><td id=";yK&lt;" class=""><code>FOREIGN KEY (users.id)</code></td><td id="yLrB" class="">ID của người đặt hàng (có thể NULL nếu là khách vãng lai)</td></tr><tr id="1696a437-f763-491c-bd10-5427fe377a89"><td id="v~Fr" class=""><code>email</code></td><td id="]FYE" class=""><code>VARCHAR(100)</code></td><td id=";yK&lt;" class=""><code>NOT NULL</code></td><td id="yLrB" class="">Email của người nhận hàng (dùng để liên lạc và tra cứu đơn hàng cho khách)</td></tr><tr id="8b6fa18d-74d3-4e39-9916-c3d338302ad1"><td id="v~Fr" class=""><code>order_date</code></td><td id="]FYE" class=""><code>TIMESTAMP WITH TIME ZONE</code></td><td id=";yK&lt;" class=""><code>DEFAULT NOW()</code></td><td id="yLrB" class="">Ngày đặt hàng</td></tr><tr id="1025d576-eb97-4091-8102-8abdf9a76c85"><td id="v~Fr" class=""><code>status</code></td><td id="]FYE" class=""><code>order_status</code></td><td id=";yK&lt;" class=""><code>NOT NULL, DEFAULT &#x27;pending&#x27;</code></td><td id="yLrB" class="">Trạng thái đơn hàng</td></tr><tr id="fa317d69-341b-4f50-8a89-0121387c1b1d"><td id="v~Fr" class=""><code>total_amount</code></td><td id="]FYE" class=""><code>DECIMAL(12, 2)</code></td><td id=";yK&lt;" class=""><code>NOT NULL</code></td><td id="yLrB" class="">Tổng giá trị đơn hàng</td></tr><tr id="f1a7bb07-9137-4de4-9487-f83fe0d06588"><td id="v~Fr" class=""><code>shipping_address</code></td><td id="]FYE" class=""><code>TEXT</code></td><td id=";yK&lt;" class=""><code>NOT NULL</code></td><td id="yLrB" class="">Địa chỉ giao hàng</td></tr><tr id="aac086c7-f558-4bb0-a2de-8c17ed126b73"><td id="v~Fr" class=""><code>recipient_name</code></td><td id="]FYE" class=""><code>VARCHAR(100)</code></td><td id=";yK&lt;" class=""><code>NOT NULL</code></td><td id="yLrB" class="">Tên người nhận</td></tr><tr id="a78da419-0c0d-415b-9556-dce3a2a5dafe"><td id="v~Fr" class=""><code>recipient_phone</code></td><td id="]FYE" class=""><code>VARCHAR(20)</code></td><td id=";yK&lt;" class=""><code>NOT NULL</code></td><td id="yLrB" class="">SĐT người nhận</td></tr><tr id="cdf38a3e-f5d7-4e64-a7da-a44b5424f7b5"><td id="v~Fr" class=""><code>voucher_id</code></td><td id="]FYE" class=""><code>INT</code></td><td id=";yK&lt;" class=""><code>FOREIGN KEY (vouchers.id)</code></td><td id="yLrB" class="">ID voucher đã áp dụng (nếu có)</td></tr></tbody></table><p id="076486f0-caea-4ae8-82e2-bdbad77382d3" class=""><strong>7. Bảng </strong><code><strong>order_items</strong></code></p><table id="90473e73-bdca-4a5c-a1b6-7998e3cac023" class="simple-table"><thead class="simple-table-header"><tr id="65ebdf53-ec26-4ff4-ba4f-b0436a6b36c1"><th id="zUhh" class="simple-table-header-color simple-table-header">Tên cột</th><th id="pu`{" class="simple-table-header-color simple-table-header">Kiểu dữ liệu</th><th id="sFZ_" class="simple-table-header-color simple-table-header">Ràng buộc</th><th id="euIY" class="simple-table-header-color simple-table-header">Mô tả</th></tr></thead><tbody><tr id="73059cf5-a6d5-4c96-9bf4-36ec085ea7a4"><td id="zUhh" class=""><code>order_id</code></td><td id="pu`{" class=""><code>INT</code></td><td id="sFZ_" class=""><code>PRIMARY KEY, FOREIGN KEY (orders.id) ON DELETE CASCADE</code></td><td id="euIY" class="">ID đơn hàng. Xóa chi tiết khi đơn hàng bị xóa.</td></tr><tr id="ca39c57e-8f1f-4219-936c-2c923debfb93"><td id="zUhh" class=""><code>product_id</code></td><td id="pu`{" class=""><code>INT</code></td><td id="sFZ_" class=""><code>PRIMARY KEY, FOREIGN KEY (products.id) ON DELETE RESTRICT</code></td><td id="euIY" class=""><strong>(CẬP NHẬT)</strong> ID sản phẩm. Ngăn xóa sản phẩm nếu đã tồn tại trong một đơn hàng.</td></tr><tr id="40c277ad-2ec1-4de7-9e71-66a788688cb9"><td id="zUhh" class=""><code>quantity</code></td><td id="pu`{" class=""><code>INT</code></td><td id="sFZ_" class=""><code>NOT NULL</code></td><td id="euIY" class="">Số lượng sản phẩm đã mua</td></tr><tr id="5b465d67-6199-43fa-a201-e82ebf6fe3fd"><td id="zUhh" class=""><code>price</code></td><td id="pu`{" class=""><code>DECIMAL(12, 2)</code></td><td id="sFZ_" class=""><code>NOT NULL</code></td><td id="euIY" class="">Giá sản phẩm tại thời điểm mua</td></tr></tbody></table><p id="af2efebf-7e1a-41aa-8690-7e17076c3a0d" class=""><strong>8. Bảng </strong><code><strong>reviews</strong></code></p><table id="9a84847d-edcf-4901-ba9f-5e2bdc6abfce" class="simple-table"><thead class="simple-table-header"><tr id="1c6abb3f-4c73-4975-a01f-ae5521efe1d7"><th id="eBJK" class="simple-table-header-color simple-table-header">Tên cột</th><th id="snO]" class="simple-table-header-color simple-table-header">Kiểu dữ liệu</th><th id="=H;~" class="simple-table-header-color simple-table-header">Ràng buộc</th><th id="suPx" class="simple-table-header-color simple-table-header">Mô tả</th></tr></thead><tbody><tr id="94e75a1f-feba-4562-8f5b-48de160f3e9e"><td id="eBJK" class=""><code>id</code></td><td id="snO]" class=""><code>SERIAL</code></td><td id="=H;~" class=""><code>PRIMARY KEY</code></td><td id="suPx" class="">ID định danh duy nhất</td></tr><tr id="dcafcc26-15fd-4a38-9c9f-c821983a5c88"><td id="eBJK" class=""><code>user_id</code></td><td id="snO]" class=""><code>INT</code></td><td id="=H;~" class=""><code>NOT NULL, FOREIGN KEY (users.id) ON DELETE CASCADE</code></td><td id="suPx" class="">ID người đánh giá. Xóa đánh giá khi người dùng bị xóa.</td></tr><tr id="9f594ee6-8035-4dd1-9cba-059d66cbb61e"><td id="eBJK" class=""><code>product_id</code></td><td id="snO]" class=""><code>INT</code></td><td id="=H;~" class=""><code>NOT NULL, FOREIGN KEY (products.id) ON DELETE CASCADE</code></td><td id="suPx" class="">ID sản phẩm được đánh giá. Xóa đánh giá khi sản phẩm bị xóa.</td></tr><tr id="0b9f63b3-8b84-494a-8c45-a26df7c52da7"><td id="eBJK" class=""><code>rating</code></td><td id="snO]" class=""><code>INT</code></td><td id="=H;~" class=""><code>NOT NULL, CHECK (rating &gt;= 1 AND rating &lt;= 5)</code></td><td id="suPx" class="">Điểm sao (từ 1 đến 5)</td></tr><tr id="4205d4f5-1b11-4c92-9ed8-432bb4b5054d"><td id="eBJK" class=""><code>comment</code></td><td id="snO]" class=""><code>TEXT</code></td><td id="=H;~" class=""></td><td id="suPx" class="">Nội dung bình luận</td></tr><tr id="9467fd9b-ff82-45e7-b3c4-6ff5b4f9e266"><td id="eBJK" class=""><code>created_at</code></td><td id="snO]" class=""><code>TIMESTAMP WITH TIME ZONE</code></td><td id="=H;~" class=""><code>DEFAULT NOW()</code></td><td id="suPx" class=""></td></tr><tr id="3c81b703-b12b-4ff8-8f27-d1be2e563edb"><td id="eBJK" class=""><code>updated_at</code></td><td id="snO]" class=""><code>TIMESTAMP WITH TIME ZONE</code></td><td id="=H;~" class=""><code>DEFAULT NOW()</code></td><td id="suPx" class="">Thời gian cập nhật đánh giá</td></tr><tr id="413adc43-6697-482a-9c68-aa791e4a4951"><td id="eBJK" class=""><code>UNIQUE(user_id, product_id)</code></td><td id="snO]" class="">Ràng buộc duy nhất</td><td id="=H;~" class=""></td><td id="suPx" class="">Mỗi người dùng chỉ đánh giá 1 sản phẩm 1 lần</td></tr></tbody></table><p id="5eb1e72c-e37d-425f-af8e-2f22d54f7666" class=""><strong>9. Bảng </strong><code><strong>vouchers</strong></code></p><table id="8cfdf541-98a2-4747-8026-c2707dc786e4" class="simple-table"><thead class="simple-table-header"><tr id="c74cbfea-cd07-429a-9e72-240f7b061049"><th id="XRTj" class="simple-table-header-color simple-table-header">Tên cột</th><th id="~&gt;&lt;Q" class="simple-table-header-color simple-table-header">Kiểu dữ liệu</th><th id="C@dd" class="simple-table-header-color simple-table-header">Ràng buộc</th><th id="`Z:=" class="simple-table-header-color simple-table-header">Mô tả</th></tr></thead><tbody><tr id="f20603ae-30ca-4464-a0f1-2f825323ca7a"><td id="XRTj" class=""><code>id</code></td><td id="~&gt;&lt;Q" class=""><code>SERIAL</code></td><td id="C@dd" class=""><code>PRIMARY KEY</code></td><td id="`Z:=" class="">ID định danh duy nhất</td></tr><tr id="32e41069-666f-4488-96dc-d8355dd672e3"><td id="XRTj" class=""><code>code</code></td><td id="~&gt;&lt;Q" class=""><code>VARCHAR(50)</code></td><td id="C@dd" class=""><code>NOT NULL, UNIQUE</code></td><td id="`Z:=" class="">Mã voucher</td></tr><tr id="e88657c9-b842-4a81-af08-e5a6e7c6c9f0"><td id="XRTj" class=""><code>discount_type</code></td><td id="~&gt;&lt;Q" class=""><code>discount_type</code></td><td id="C@dd" class=""><code>NOT NULL</code></td><td id="`Z:=" class="">Loại giảm giá</td></tr><tr id="31352205-bd75-4b9c-8714-1e68e302ea3b"><td id="XRTj" class=""><code>discount_value</code></td><td id="~&gt;&lt;Q" class=""><code>DECIMAL(12, 2)</code></td><td id="C@dd" class=""><code>NOT NULL</code></td><td id="`Z:=" class="">Giá trị giảm</td></tr><tr id="414da6e4-c31b-4a92-9fe5-93c520039748"><td id="XRTj" class=""><code>max_usage</code></td><td id="~&gt;&lt;Q" class=""><code>INT</code></td><td id="C@dd" class=""><code>NOT NULL</code></td><td id="`Z:=" class="">Số lần sử dụng tối đa</td></tr><tr id="40e98447-fadc-4573-990f-0061b39390b8"><td id="XRTj" class=""><code>current_usage</code></td><td id="~&gt;&lt;Q" class=""><code>INT</code></td><td id="C@dd" class=""><code>DEFAULT 0</code></td><td id="`Z:=" class="">Số lần đã sử dụng</td></tr><tr id="ad75c0ee-bdec-4f23-a9de-0cbbf8b4d3d6"><td id="XRTj" class=""><code>expiry_date</code></td><td id="~&gt;&lt;Q" class=""><code>TIMESTAMP WITH TIME ZONE</code></td><td id="C@dd" class=""><code>NOT NULL</code></td><td id="`Z:=" class="">Ngày hết hạn</td></tr><tr id="0819f350-808e-40d8-954f-86bf6a7ff65f"><td id="XRTj" class=""><code>created_at</code></td><td id="~&gt;&lt;Q" class=""><code>TIMESTAMP WITH TIME ZONE</code></td><td id="C@dd" class=""><code>DEFAULT NOW()</code></td><td id="`Z:=" class=""></td></tr><tr id="fc0bfec3-1a4e-4dd1-b320-0d84513bf89f"><td id="XRTj" class=""><code>min_order_value</code></td><td id="~&gt;&lt;Q" class=""><code>DECIMAL(12, 2)</code></td><td id="C@dd" class=""><code>DEFAULT 0</code></td><td id="`Z:=" class="">Giá trị đơn hàng tối thiểu</td></tr><tr id="b1dd918a-c272-4911-9427-2c8eb3789e80"><td id="XRTj" class=""><code>is_active</code></td><td id="~&gt;&lt;Q" class=""><code>BOOLEAN</code></td><td id="C@dd" class=""><code>DEFAULT true</code></td><td id="`Z:=" class="">Trạng thái kích hoạt</td></tr></tbody></table><p id="e5577af3-6ed9-4d6d-8409-5367fa5f3a01" class=""><strong>10. Bảng </strong><code><strong>addresses</strong></code></p><table id="1bead4d5-14a3-4c22-b055-cbd04f243ddb" class="simple-table"><thead class="simple-table-header"><tr id="f05f19db-41c4-4ce1-a74e-cb04e603169c"><th id="&gt;kaO" class="simple-table-header-color simple-table-header">Tên cột</th><th id="tdVn" class="simple-table-header-color simple-table-header">Kiểu dữ liệu</th><th id="bDr:" class="simple-table-header-color simple-table-header">Ràng buộc</th><th id="go}\" class="simple-table-header-color simple-table-header">Mô tả</th></tr></thead><tbody><tr id="cb66cbf6-bba4-4f9a-9ebc-6608ef3746c2"><td id="&gt;kaO" class=""><code>id</code></td><td id="tdVn" class=""><code>SERIAL</code></td><td id="bDr:" class=""><code>PRIMARY KEY</code></td><td id="go}\" class="">ID định danh duy nhất</td></tr><tr id="2d36c352-1ab7-4237-bc3d-4a41164c1c20"><td id="&gt;kaO" class=""><code>user_id</code></td><td id="tdVn" class=""><code>INT</code></td><td id="bDr:" class=""><code>NOT NULL, FOREIGN KEY (users.id) ON DELETE CASCADE</code></td><td id="go}\" class="">ID của người dùng sở hữu địa chỉ. Xóa địa chỉ khi người dùng bị xóa.</td></tr><tr id="68b5febd-775b-448d-a16a-39ba807ad68f"><td id="&gt;kaO" class=""><code>recipient_name</code></td><td id="tdVn" class=""><code>VARCHAR(100)</code></td><td id="bDr:" class=""><code>NOT NULL</code></td><td id="go}\" class="">Tên người nhận</td></tr><tr id="4cf5c6cf-238d-4481-867a-9d4f24be5959"><td id="&gt;kaO" class=""><code>phone_number</code></td><td id="tdVn" class=""><code>VARCHAR(20)</code></td><td id="bDr:" class=""><code>NOT NULL</code></td><td id="go}\" class="">SĐT người nhận</td></tr><tr id="f6d088ac-8131-4478-9373-42fa7d10165b"><td id="&gt;kaO" class=""><code>street_address</code></td><td id="tdVn" class=""><code>VARCHAR(255)</code></td><td id="bDr:" class=""><code>NOT NULL</code></td><td id="go}\" class="">Địa chỉ chi tiết</td></tr><tr id="23b6bd1e-0c04-4b01-aab8-073885be0d59"><td id="&gt;kaO" class=""><code>city</code></td><td id="tdVn" class=""><code>VARCHAR(100)</code></td><td id="bDr:" class=""><code>NOT NULL</code></td><td id="go}\" class="">Tỉnh/Thành phố</td></tr><tr id="768857f2-26b1-4c1b-af64-0b8dc11f1f89"><td id="&gt;kaO" class=""><code>is_default</code></td><td id="tdVn" class=""><code>BOOLEAN</code></td><td id="bDr:" class=""><code>DEFAULT FALSE</code></td><td id="go}\" class="">Đánh dấu địa chỉ mặc định</td></tr></tbody></table><p id="5a0726d4-e37f-491f-bbd1-b8c02388c063" class=""><strong>11. Bảng </strong><code><strong>carts</strong></code></p><table id="ddd52cdf-3ef9-4da6-8fed-bc3b60f1831e" class="simple-table"><thead class="simple-table-header"><tr id="f5d9ec9b-9448-4df0-be5b-2eaee3a6a288"><th id="{tsI" class="simple-table-header-color simple-table-header">Tên cột</th><th id="=YI_" class="simple-table-header-color simple-table-header">Kiểu dữ liệu</th><th id="Zt~g" class="simple-table-header-color simple-table-header">Ràng buộc</th><th id="IZ:Z" class="simple-table-header-color simple-table-header">Mô tả</th></tr></thead><tbody><tr id="60222731-6710-4e81-9a71-4632aa365be6"><td id="{tsI" class=""><code>id</code></td><td id="=YI_" class=""><code>SERIAL</code></td><td id="Zt~g" class=""><code>PRIMARY KEY</code></td><td id="IZ:Z" class="">ID định danh duy nhất</td></tr><tr id="f9e2453b-fa3a-4650-8505-17b55c92408f"><td id="{tsI" class=""><code>user_id</code></td><td id="=YI_" class=""><code>INT</code></td><td id="Zt~g" class=""><code>NOT NULL, UNIQUE, FOREIGN KEY (users.id) ON DELETE CASCADE</code></td><td id="IZ:Z" class="">ID của người dùng sở hữu giỏ hàng. Xóa giỏ hàng khi người dùng bị xóa.</td></tr><tr id="c849dd55-5cb6-4b89-9c07-9cf93773e1e7"><td id="{tsI" class=""><code>created_at</code></td><td id="=YI_" class=""><code>TIMESTAMP WITH TIME ZONE</code></td><td id="Zt~g" class=""><code>DEFAULT NOW()</code></td><td id="IZ:Z" class="">Thời gian tạo</td></tr><tr id="1f9e6b2d-92ed-4951-a24c-29e9fad160ff"><td id="{tsI" class=""><code>updated_at</code></td><td id="=YI_" class=""><code>TIMESTAMP WITH TIME ZONE</code></td><td id="Zt~g" class=""><code>DEFAULT NOW()</code></td><td id="IZ:Z" class="">Thời gian cập nhật</td></tr></tbody></table><p id="bae6f192-250a-4303-9c58-9125a66a1c8e" class=""><strong>12. Bảng </strong><code><strong>cart_items</strong></code></p><table id="c19984eb-7020-49a7-b3ea-c13071f7c72a" class="simple-table"><thead class="simple-table-header"><tr id="9789419e-3797-4456-8c65-a0a87a67784e"><th id="s]MB" class="simple-table-header-color simple-table-header">Tên cột</th><th id="o`T~" class="simple-table-header-color simple-table-header">Kiểu dữ liệu</th><th id="LI|G" class="simple-table-header-color simple-table-header">Ràng buộc</th><th id="Rw`@" class="simple-table-header-color simple-table-header">Mô tả</th></tr></thead><tbody><tr id="dfb123d9-8e17-4e9a-9997-f2d93b05e43d"><td id="s]MB" class=""><code>cart_id</code></td><td id="o`T~" class=""><code>INT</code></td><td id="LI|G" class=""><code>PRIMARY KEY, FOREIGN KEY (carts.id) ON DELETE CASCADE</code></td><td id="Rw`@" class="">ID của giỏ hàng. Xóa item khi giỏ hàng bị xóa.</td></tr><tr id="b71ee90d-01b5-46f7-a260-bae420f67911"><td id="s]MB" class=""><code>product_id</code></td><td id="o`T~" class=""><code>INT</code></td><td id="LI|G" class=""><code>PRIMARY KEY, FOREIGN KEY (products.id) ON DELETE CASCADE</code></td><td id="Rw`@" class="">ID của sản phẩm. Xóa item khi sản phẩm bị xóa.</td></tr><tr id="4fdea093-e3f5-4c6d-ae06-815488a64858"><td id="s]MB" class=""><code>quantity</code></td><td id="o`T~" class=""><code>INT</code></td><td id="LI|G" class=""><code>NOT NULL, CHECK (quantity &gt; 0)</code></td><td id="Rw`@" class="">Số lượng sản phẩm</td></tr><tr id="6d97d033-a268-4170-bef9-8941101000ca"><td id="s]MB" class=""><code>added_at</code></td><td id="o`T~" class=""><code>TIMESTAMP WITH TIME ZONE</code></td><td id="LI|G" class=""><code>DEFAULT NOW()</code></td><td id="Rw`@" class="">Thời gian thêm vào giỏ</td></tr></tbody></table><p id="f53769e9-03a6-4c4e-a26e-1c32310976e4" class=""><strong>13. Bảng </strong><code><strong>password_reset_tokens</strong></code></p><table id="28125b4d-e293-4c70-9460-43f753018138" class="simple-table"><thead class="simple-table-header"><tr id="6f8589eb-a8a2-44e9-a78a-0bcaae4ee7f3"><th id="J&lt;:O" class="simple-table-header-color simple-table-header">Tên cột</th><th id="\@M~" class="simple-table-header-color simple-table-header">Kiểu dữ liệu</th><th id="usl&lt;" class="simple-table-header-color simple-table-header">Ràng buộc</th><th id="sums" class="simple-table-header-color simple-table-header">Mô tả</th></tr></thead><tbody><tr id="ecde895f-99a5-4759-a81e-50487edd3e15"><td id="J&lt;:O" class=""><code>id</code></td><td id="\@M~" class=""><code>SERIAL</code></td><td id="usl&lt;" class=""><code>PRIMARY KEY</code></td><td id="sums" class="">ID định danh duy nhất</td></tr><tr id="4966bf37-b637-4938-b052-7ae37852f19f"><td id="J&lt;:O" class=""><code>user_id</code></td><td id="\@M~" class=""><code>INT</code></td><td id="usl&lt;" class=""><code>NOT NULL, FOREIGN KEY (users.id) ON DELETE CASCADE</code></td><td id="sums" class="">ID của người dùng yêu cầu. Xóa token khi người dùng bị xóa.</td></tr><tr id="f31f47ec-f274-4ff7-9685-2547c37a92f7"><td id="J&lt;:O" class=""><code>token</code></td><td id="\@M~" class=""><code>VARCHAR(255)</code></td><td id="usl&lt;" class=""><code>NOT NULL, UNIQUE</code></td><td id="sums" class="">Chuỗi token duy nhất</td></tr><tr id="9a34881a-d272-4605-a450-cc87f24bf06d"><td id="J&lt;:O" class=""><code>expiry_date</code></td><td id="\@M~" class=""><code>TIMESTAMP WITH TIME ZONE</code></td><td id="usl&lt;" class=""><code>NOT NULL</code></td><td id="sums" class="">Thời gian token hết hạn</td></tr><tr id="ac36c9bb-c715-4f40-80a1-c9ebbfa638d9"><td id="J&lt;:O" class=""><code>created_at</code></td><td id="\@M~" class=""><code>TIMESTAMP WITH TIME ZONE</code></td><td id="usl&lt;" class=""><code>DEFAULT NOW()</code></td><td id="sums" class="">Thời gian tạo</td></tr></tbody></table><p id="f48824d5-c2dc-4a3c-8db4-460d1adc47a4" class=""><strong>14. Bảng </strong><code><strong>review_likes</strong></code></p><table id="31a7707f-ade0-4da1-aa12-5cb887fae803" class="simple-table"><thead class="simple-table-header"><tr id="20b35c9d-3693-4302-8886-c19c950865b8"><th id="W}`K" class="simple-table-header-color simple-table-header">Tên cột</th><th id="{K=M" class="simple-table-header-color simple-table-header">Kiểu dữ liệu</th><th id="?grx" class="simple-table-header-color simple-table-header">Ràng buộc</th><th id="omGb" class="simple-table-header-color simple-table-header">Mô tả</th></tr></thead><tbody><tr id="3d4e5eab-c937-4b34-8e5c-b8578eb31550"><td id="W}`K" class=""><code>id</code></td><td id="{K=M" class=""><code>SERIAL</code></td><td id="?grx" class=""><code>PRIMARY KEY</code></td><td id="omGb" class="">ID định danh duy nhất của lượt thích</td></tr><tr id="5727c64d-75a7-4d33-979c-234d3c19512c"><td id="W}`K" class=""><code>user_id</code></td><td id="{K=M" class=""><code>INT</code></td><td id="?grx" class=""><code>NOT NULL, FOREIGN KEY (users.id) ON DELETE CASCADE</code></td><td id="omGb" class="">ID của người dùng đã thích bài đánh giá</td></tr><tr id="d62450a9-5e06-4e22-86cd-973ba65c2cfc"><td id="W}`K" class=""><code>review_id</code></td><td id="{K=M" class=""><code>INT</code></td><td id="?grx" class=""><code>NOT NULL, FOREIGN KEY (reviews.id) ON DELETE CASCADE</code></td><td id="omGb" class="">ID của bài đánh giá được thích</td></tr><tr id="6004ddf0-7595-4f40-a855-f3c02440a5df"><td id="W}`K" class=""><code>created_at</code></td><td id="{K=M" class=""><code>TIMESTAMP WITH TIME ZONE</code></td><td id="?grx" class=""><code>DEFAULT NOW()</code></td><td id="omGb" class="">Thời điểm thực hiện &quot;Thích&quot;</td></tr><tr id="7ff41a54-da35-48c7-a4c7-a7d94445a228"><td id="W}`K" class=""><code>UNIQUE(user_id, review_id)</code></td><td id="{K=M" class="">Ràng buộc duy nhất</td><td id="?grx" class=""></td><td id="omGb" class="">Đảm bảo một người dùng chỉ thích một bài đánh giá một lần</td></tr></tbody></table><hr id="456156d8-8cf0-47dc-912e-4f0f2f84d898"/><h3 id="1c88bdb3-1d6e-4a58-9cdb-873dd9f578a9" class=""><strong>5. Chỉ mục (Indexes)</strong></h3><p id="55a3171c-f38a-4713-af56-7f8fba6f2fd0" class="">Để tối ưu hóa hiệu năng truy vấn, các chỉ mục sau đây nên được tạo.</p><ul id="1fdf2123-a01a-4f71-a86c-1f37335db362" class="bulleted-list"><li style="list-style-type:disc"><strong>Bảng </strong><code><strong>users</strong></code><strong>:</strong><ul id="01d3a40f-de5f-4bfb-b2aa-5cbbb23b8824" class="bulleted-list"><li style="list-style-type:circle"><code>CREATE INDEX idx_users_email ON users(email);</code> (Quan trọng cho việc đăng nhập và kiểm tra trùng lặp)</li></ul></li></ul><ul id="e768802f-9938-48b7-bfe7-e8b7d6c959cd" class="bulleted-list"><li style="list-style-type:disc"><strong>Bảng </strong><code><strong>products</strong></code><strong>:</strong><ul id="5f8eed35-8aea-4448-ad38-1cfc15790b3f" class="bulleted-list"><li style="list-style-type:circle"><code>CREATE INDEX idx_products_name ON products(name);</code> (Quan trọng cho chức năng tìm kiếm)</li></ul><ul id="3a989cc0-7b64-44e0-8d7c-cea03e799117" class="bulleted-list"><li style="list-style-type:circle"><code>CREATE INDEX idx_products_category_id ON products(category_id);</code></li></ul><ul id="96e7521a-d7c8-4f35-947a-c4ab83d43856" class="bulleted-list"><li style="list-style-type:circle"><code>CREATE INDEX idx_products_brand_id ON products(brand_id);</code></li></ul></li></ul><ul id="ed1838ca-0870-4494-a95a-3a0fa889658c" class="bulleted-list"><li style="list-style-type:disc"><strong>Bảng </strong><code><strong>orders</strong></code><strong>:</strong><ul id="76475e13-fb48-4f28-b18b-51dd41370eca" class="bulleted-list"><li style="list-style-type:circle"><code>CREATE INDEX idx_orders_user_id ON orders(user_id);</code></li></ul><ul id="60e2bb07-28dc-4339-b4df-1418dccc5666" class="bulleted-list"><li style="list-style-type:circle"><code>CREATE INDEX idx_orders_email ON orders(email);</code> (Quan trọng cho việc tra cứu đơn hàng của khách)</li></ul></li></ul><ul id="cd0bc990-d30f-47fd-88df-137b560279e9" class="bulleted-list"><li style="list-style-type:disc"><strong>Bảng </strong><code><strong>vouchers</strong></code><strong>:</strong><ul id="098a8eed-cbd8-4e5e-b37c-50876c40505e" class="bulleted-list"><li style="list-style-type:circle"><code>CREATE INDEX idx_vouchers_code ON vouchers(code);</code> (Quan trọng cho việc áp dụng voucher)</li></ul></li></ul><p id="275996bd-0744-805c-b298-f95e97763e81" class="">
+</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

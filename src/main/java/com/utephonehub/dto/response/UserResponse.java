@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 public class UserResponse {
     
     private Long id;
+    private String username;
     private String fullName;
     private String email;
     private String phoneNumber;
@@ -20,9 +21,10 @@ public class UserResponse {
     // Constructors
     public UserResponse() {}
     
-    public UserResponse(Long id, String fullName, String email, String phoneNumber, 
+    public UserResponse(Long id, String username, String fullName, String email, String phoneNumber, 
                        String role, String status, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
+        this.username = username;
         this.fullName = fullName;
         this.email = email;
         this.phoneNumber = phoneNumber;
@@ -39,6 +41,14 @@ public class UserResponse {
     
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    public String getUsername() {
+        return username;
+    }
+    
+    public void setUsername(String username) {
+        this.username = username;
     }
     
     public String getFullName() {

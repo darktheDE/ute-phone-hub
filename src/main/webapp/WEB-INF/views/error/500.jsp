@@ -6,6 +6,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>500 - Lỗi máy chủ | UTE Phone Hub</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/static/favicon.png">
+    <link rel="shortcut icon" type="image/png" href="${pageContext.request.contextPath}/static/favicon.png">
+    
     <style>
         * {
             margin: 0;

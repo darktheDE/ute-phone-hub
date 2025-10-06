@@ -59,7 +59,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"fullName\": \"Trần Văn An\",\n  \"email\": \"an.tran@example.com\",\n  \"password\": \"Password123!\"\n}"
+              "raw": "{\n  \"username\": \"antran\",\n  \"fullName\": \"Trần Văn An\",\n  \"email\": \"an.tran@example.com\",\n  \"password\": \"Password123\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/auth/register",
@@ -97,7 +97,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"an.tran@example.com\",\n  \"password\": \"Password123!\"\n}"
+              "raw": "{\n  \"username\": \"antran\",\n  \"password\": \"Password123\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/auth/login",

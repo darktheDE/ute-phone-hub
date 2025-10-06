@@ -1,0 +1,706 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>#1 SRS</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(134, 131, 126, 1);
+	fill: rgba(134, 131, 126, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(63, 126, 190, 1);
+	fill: rgba(63, 126, 190, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 111, 200, 0.09);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(134, 131, 126, 1);
+	fill: rgba(134, 131, 126, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(63, 126, 190, 1);
+	fill: rgba(63, 126, 190, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(232, 242, 250, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 99, 174, 0.172); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="25c996bd-0744-80d8-adf2-c74d2d83e6c2" class="page sans"><header><div class="page-header-icon undefined"><img class="icon notion-static-icon" src="https://www.notion.so/icons/document_red.svg"/></div><h1 class="page-title"><strong>#1 SRS</strong></h1><p class="page-description"></p><table class="properties"><tbody><tr class="property-row property-row-created_by"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/user-circle_gray.svg" style="width:14px;height:14px;display:block"/></span>Created by</th><td><span class="user"><img src="IMG_4253.jpg" class="icon user-icon"/>Đỗ Kiến Hưng</span></td></tr><tr class="property-row property-row-created_time"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/clock_gray.svg" style="width:14px;height:14px;display:block"/></span>Created time</th><td><time>@27 tháng 8, 2025 23:08</time></td></tr><tr class="property-row property-row-last_edited_by"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/user-circle_gray.svg" style="width:14px;height:14px;display:block"/></span>Last edited by</th><td><span class="user"><img src="https://lh3.googleusercontent.com/a/ACg8ocLTIymLGTYiklz6h3TsyYH6hUltltSadHAnX1L5FS99cf6p8uQ=s100" class="icon user-icon"/>Nguyen Kim Tu</span></td></tr><tr class="property-row property-row-last_edited_time"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/clock_gray.svg" style="width:14px;height:14px;display:block"/></span>Last updated time</th><td><time>@6 tháng 10, 2025 19:11</time></td></tr></tbody></table></header><div class="page-body"><h2 id="fa5ab078-0748-4da5-bbf5-ce607aa2d592" class=""><strong>SRS - Software Requirement Specification</strong></h2><p id="479e0250-dcfe-4129-9250-9f33244f00bb" class=""><strong>Tên dự án:</strong> <strong>UTE-PhoneHub</strong> - Website Thương mại điện tử Bán điện thoại<br/><strong>Phiên bản:</strong> 1.3<br/><strong>Ngày tạo:</strong> 21/09/2025<br/><strong>Người tạo:</strong> Đỗ Kiến Hưng</p><hr id="d88ddd0c-ebf3-45b6-81d2-5caecd1fc202"/><h3 id="0898f2a6-4136-4be4-81e9-da5697765666" class=""><strong>Lịch sử thay đổi</strong></h3><ul id="cebff62b-c50a-4f72-9cbd-76770f13e10f" class="bulleted-list"><li style="list-style-type:disc"><strong>v1.3 (21/09/2025):</strong><ul id="e2d39653-554a-4c9f-94ec-83ed34a8d048" class="bulleted-list"><li style="list-style-type:circle"><strong>Làm rõ ràng buộc toàn vẹn dữ liệu:</strong> Bổ sung yêu cầu không cho phép xóa các thực thể cha (danh mục, thương hiệu) khi vẫn còn các thực thể con liên kết.</li></ul><ul id="3021b3cc-defa-4575-8975-32565cbe47fe" class="bulleted-list"><li style="list-style-type:circle"><strong>Tăng cường yêu cầu bảo mật:</strong> Bổ sung yêu cầu chống tấn công brute-force cho các chức năng nhạy cảm.</li></ul></li></ul><ul id="7b9642bd-6c9e-4202-b2af-c63f627b84ef" class="bulleted-list"><li style="list-style-type:disc"><strong>v1.2 (15/09/2025):</strong><ul id="98be6d71-b6fb-4808-948e-1ac6eea6b312" class="bulleted-list"><li style="list-style-type:circle">Bổ sung chức năng Đặt hàng cho Khách (Guest Checkout) và Tra cứu đơn hàng công khai.</li></ul><ul id="2714e517-57af-4d40-98a0-b6346444feb4" class="bulleted-list"><li style="list-style-type:circle">Tăng cường yêu cầu về mật khẩu mạnh.</li></ul><ul id="361e9060-a24a-4098-9156-fa39f0bb1a90" class="bulleted-list"><li style="list-style-type:circle">Làm rõ logic quản lý tồn kho.</li></ul><ul id="c754aad5-a3d1-47b3-8e31-a9bc871c670d" class="bulleted-list"><li style="list-style-type:circle">Định nghĩa cơ chế xóa mềm (soft-delete) cho các dữ liệu quan trọng.</li></ul><ul id="955f7e7e-d09c-4b6d-863f-f5f98954bb5a" class="bulleted-list"><li style="list-style-type:circle">Thêm các yêu cầu phi chức năng về bảo mật và hiệu năng.</li></ul></li></ul><ul id="6af4851a-4dbe-4a27-9b85-df59265d1bea" class="bulleted-list"><li style="list-style-type:disc"><strong>v1.1 (26/08/2025):</strong> Phiên bản ban đầu của tài liệu.</li></ul><hr id="c2ab4c26-6524-4222-aae4-e7793bb5c6c7"/><h3 id="11938f30-c26e-4503-9097-7d1f03f49eb0" class=""><strong>1. Giới thiệu</strong></h3><p id="fb08cc55-74f2-4f31-8940-bdcb1771cda9" class=""><strong>1.1. Mục đích</strong><br/>Tài liệu này nhằm mục đích định nghĩa và đặc tả toàn bộ các yêu cầu chức năng, phi chức năng, phạm vi và các ràng buộc của dự án &quot;UTE-PHONEHUB&quot;. Nó sẽ là nguồn thông tin tham chiếu chính thức và duy nhất cho đội phát triển, đội kiểm thử (nếu có), và các bên liên quan trong suốt quá trình phát triển sản phẩm.</p><p id="1d02b8f7-878f-4f1e-98a9-dcfeef86b390" class=""><strong>1.2. Phạm vi dự án</strong><br/>Dự án tập trung vào việc xây dựng một hệ thống thương mại điện tử hoàn chỉnh với hai phân hệ chính:</p><ul id="2c9736f6-c943-40a6-bc46-b32d2f140601" class="bulleted-list"><li style="list-style-type:disc"><strong>Phân hệ Khách hàng (Client-facing):</strong> Cung cấp giao diện cho người dùng cuối để duyệt, tìm kiếm, xem chi tiết sản phẩm, quản lý giỏ hàng và thực hiện quy trình đặt hàng.</li></ul><ul id="3789cb39-e573-4192-acbb-79b2c1986921" class="bulleted-list"><li style="list-style-type:disc"><strong>Phân hệ Quản trị (Admin Panel):</strong> Cung cấp giao diện cho quản trị viên để quản lý toàn bộ nội dung và hoạt động của website, bao gồm sản phẩm, danh mục, đơn hàng, và người dùng.</li></ul><p id="d5ee27ed-9fe5-42ff-9ed1-3f337a222b34" class=""><strong>Các chức năng ngoài phạm vi (Out-of-scope):</strong></p><ul id="2b4f89dc-33d6-4501-90bf-7b3457712ea1" class="bulleted-list"><li style="list-style-type:disc">Tích hợp cổng thanh toán trực tuyến thực tế (VNPAY, Momo, Stripe...).</li></ul><ul id="4e24d0e1-f5a5-4433-9b56-32c70cc9fd7a" class="bulleted-list"><li style="list-style-type:disc">Tích hợp API của các đơn vị vận chuyển thực tế (GHTK, Viettel Post...).</li></ul><ul id="2cf3769c-9f82-4c7b-960f-e45bd9f3447e" class="bulleted-list"><li style="list-style-type:disc">Các chức năng marketing nâng cao: Affiliate, Loyalty Program, Email Marketing.</li></ul><ul id="d85598e2-6b9c-4c99-a636-24757d83ada4" class="bulleted-list"><li style="list-style-type:disc">Xây dựng ứng dụng di động (Mobile App).</li></ul><p id="8779929a-800f-4bb4-9d62-dd399c4dbdd0" class=""><strong>1.3. Định nghĩa và Từ viết tắt</strong></p><ul id="087a91b3-e12f-4212-924e-88c2c473fb7a" class="bulleted-list"><li style="list-style-type:disc"><strong>SRS:</strong> Software Requirement Specification (Đặc tả Yêu cầu Phần mềm).</li></ul><ul id="71652ac4-87ed-4475-88a6-4fc3ff1cdadf" class="bulleted-list"><li style="list-style-type:disc"><strong>BA:</strong> Business Analyst.</li></ul><ul id="73fced54-9c05-4761-a495-88f67e545931" class="bulleted-list"><li style="list-style-type:disc"><strong>CRUD:</strong> Create, Read, Update, Delete (Tạo, Đọc, Cập nhật, Xóa).</li></ul><ul id="364a2be3-827c-4a97-aa10-b794bc473e48" class="bulleted-list"><li style="list-style-type:disc"><strong>UI:</strong> User Interface (Giao diện người dùng).</li></ul><ul id="6381088a-8592-4d8b-87f3-78db5bc6f0dc" class="bulleted-list"><li style="list-style-type:disc"><strong>UX:</strong> User Experience (Trải nghiệm người dùng).</li></ul><ul id="f5209324-4bc8-4709-a709-a23fb33ac20f" class="bulleted-list"><li style="list-style-type:disc"><strong>API:</strong> Application Programming Interface (Giao diện lập trình ứng dụng).</li></ul><ul id="b4d82b68-7d95-478a-8142-653879dc317b" class="bulleted-list"><li style="list-style-type:disc"><strong>JWT:</strong> JSON Web Token.</li></ul><ul id="fec53c96-00df-4809-aacc-470a3c269afe" class="bulleted-list"><li style="list-style-type:disc"><strong>COD:</strong> Cash on Delivery (Thanh toán khi nhận hàng).</li></ul><p id="0a1ecce4-46ce-43f3-931d-18a574467fed" class=""><strong>1.4. Đối tượng người dùng (User Personas)</strong></p><ul id="d8039eb4-3f17-4dab-8afd-8eafba2a737a" class="bulleted-list"><li style="list-style-type:disc"><strong>Persona 1: Khách hàng</strong><ul id="261b69eb-d65f-497c-8a3b-6c41b5f30a7c" class="bulleted-list"><li style="list-style-type:circle"><strong>Mô tả:</strong> An là sinh viên năm cuối, am hiểu công nghệ, thường xuyên mua sắm online.</li></ul><ul id="678448a5-9c57-4205-93af-1e7a44b67cdd" class="bulleted-list"><li style="list-style-type:circle"><strong>Mục tiêu:</strong> Tìm kiếm một chiếc điện thoại mới có cấu hình mạnh để phục vụ học tập và giải trí. Cần thông tin sản phẩm chi tiết, so sánh giá, và đọc đánh giá từ người mua trước. Giao diện web phải nhanh và hiện đại.</li></ul></li></ul><ul id="941153b3-69fb-43b7-afa3-eed293e724b9" class="bulleted-list"><li style="list-style-type:disc"><strong>Persona 2: Quản trị viên</strong><ul id="216e204b-7ec5-45f4-a035-91f76920c2db" class="bulleted-list"><li style="list-style-type:circle"><strong>Mô tả:</strong> Minh là người quản lý hoạt động kinh doanh của website.</li></ul><ul id="9f452102-5177-4768-9f58-2dff29ffad37" class="bulleted-list"><li style="list-style-type:circle"><strong>Mục tiêu:</strong> Dễ dàng thêm/sửa/xóa sản phẩm. Theo dõi các đơn hàng mới mỗi ngày. Quản lý thông tin khách hàng. Xem các báo cáo, thống kê cơ bản về doanh thu.</li></ul></li></ul><hr id="a9395587-8ddb-4d70-8f5e-5c7bfc0b23ea"/><h3 id="baa23497-2fc8-4d4f-b55d-73d604c07e29" class=""><strong>2. Yêu cầu Chức năng (Functional Requirements)</strong></h3><p id="ef387a2c-18eb-47a1-ac6b-11c8eabf576b" class=""><strong>[FR-AUTH] - Nhóm chức năng Xác thực</strong></p><ul id="dea4e6df-004c-4cbb-9475-e03839b292e0" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-AUTH-01:</strong> Hệ thống phải cho phép người dùng đăng ký tài khoản mới bằng Tên, Email, Username và Mật khẩu. Email phải là duy nhất trong hệ thống. </li></ul><ul id="39af8007-e045-4454-9782-e498c8507a2e" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-AUTH-02:</strong> Mật khẩu của người dùng phải được băm (hashing) bằng thuật toán <code>bcrypt</code> trước khi lưu vào cơ sở dữ liệu.</li></ul><ul id="98e87cce-3792-4f95-a8fd-0a12fe176ac4" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-AUTH-03:</strong> Hệ thống phải cho phép người dùng đăng nhập bằng Email (hoặc Username) và Mật khẩu.</li></ul><ul id="cfacee10-90c3-4ca8-a1a9-2c33aec6c33d" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-AUTH-04:</strong> Khi đăng nhập thành công, hệ thống phải trả về một JWT chứa thông tin định danh người dùng (userId, email, role) và có thời hạn sử dụng.</li></ul><ul id="f4e33217-24fb-472b-92e2-0495ac9a767b" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-AUTH-05:</strong> Hệ thống phải cho phép người dùng đăng xuất, khi đó JWT phía client sẽ bị xóa.</li></ul><p id="f41e5502-7d3f-4e57-af58-fddfe2ab04ca" class=""><strong>[FR-USER] - Nhóm chức năng Quản lý Tài khoản Người dùng</strong></p><ul id="be78f027-7d1a-45f2-a0cb-435da43f57b9" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-USER-01:</strong> Sau khi đăng nhập, người dùng có thể truy cập trang &quot;Tài khoản của tôi&quot;.</li></ul><ul id="7bbc8f11-dabd-42c4-bdda-483e1dcf3716" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-USER-02:</strong> Tại đây, người dùng có thể xem và cập nhật thông tin cá nhân (Họ tên, Số điện thoại).</li></ul><ul id="9cee2bd6-ea4b-4422-b66d-0f3b06d01ae4" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-USER-03:</strong> Người dùng có thể thay đổi mật khẩu hiện tại của mình (yêu cầu nhập mật khẩu cũ và mật khẩu mới).</li></ul><ul id="1a5e71d2-d87c-4c7d-a7da-af1483573d27" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-USER-04:</strong> Người dùng có thể quản lý danh sách địa chỉ giao hàng (thêm/sửa/xóa địa chỉ).</li></ul><p id="1bc45453-7928-4bc0-82de-f6679d76a7c2" class=""><strong>[FR-PRODUCT] - Nhóm chức năng Sản phẩm (Phía Khách hàng)</strong></p><ul id="e85ded48-6c9d-456f-a611-4b07bddcfe18" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-PRODUCT-01:</strong> Trang chủ phải hiển thị các banner khuyến mãi, danh sách sản phẩm mới nhất và sản phẩm bán chạy nhất.</li></ul><ul id="cfb8bf25-109e-471a-878f-9821fec8fece" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-PRODUCT-02:</strong> Trang danh sách sản phẩm phải hiển thị sản phẩm dưới dạng lưới (grid) và có phân trang.</li></ul><ul id="2162940a-d81e-47cf-841b-8e092c5a4dae" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-PRODUCT-03:</strong> Người dùng có thể lọc sản phẩm theo: Thương hiệu, Khoảng giá, RAM, Dung lượng lưu trữ.</li></ul><ul id="00cd9268-80b3-4153-ad43-142a788d6d7e" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-PRODUCT-04:</strong> Người dùng có thể sắp xếp sản phẩm theo: Mới nhất, Giá từ thấp đến cao, Giá từ cao đến thấp.</li></ul><ul id="37329eac-33cc-446c-bf38-0ddec608076a" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-PRODUCT-05:</strong> Người dùng có thể tìm kiếm sản phẩm bằng cách nhập từ khóa vào thanh tìm kiếm.</li></ul><ul id="d9b8b1bb-8a4e-405b-86a6-518ffedb191c" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-PRODUCT-06:</strong> Trang chi tiết sản phẩm phải hiển thị đầy đủ thông tin: tên, giá, thư viện ảnh, tùy chọn phiên bản, mô tả, thông số kỹ thuật, và đánh giá.</li></ul><ul id="bc037983-b3c9-41b6-ba3f-986e86955994" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-PRODUCT-07:</strong> Hệ thống phải hiển thị trạng thái &quot;Hết hàng&quot; cho các sản phẩm có số lượng tồn kho bằng 0. Nút &quot;Thêm vào giỏ hàng&quot; phải bị vô hiệu hóa đối với các sản phẩm này.</li></ul><p id="39fa18ed-ec4d-4ca3-8eb6-4451bb7a8b06" class=""><strong>[FR-CART] - Nhóm chức năng Giỏ hàng</strong></p><ul id="5098e4b9-2461-4f2f-b194-767d61740451" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-CART-01:</strong> Người dùng có thể thêm một sản phẩm vào giỏ hàng.</li></ul><ul id="64b5859d-c8ba-4ab3-b7c7-411e403fcf7b" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-CART-02:</strong> Biểu tượng giỏ hàng trên header phải cập nhật số lượng sản phẩm theo thời gian thực.</li></ul><ul id="4e3e792b-80c7-4115-b493-ca72908a14c0" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-CART-03:</strong> Tại trang giỏ hàng, người dùng có thể xem lại danh sách sản phẩm, cập nhật số lượng, hoặc xóa sản phẩm.</li></ul><ul id="a89a8012-90bb-4417-98d8-50319b50acc5" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-CART-04:</strong> Hệ thống phải tự động tính toán và hiển thị tổng tiền của giỏ hàng.</li></ul><ul id="5682f721-2e80-4b28-8155-ebf1cf45f182" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-CART-05:</strong> Hệ thống phải kiểm tra lại số lượng tồn kho khi người dùng thêm sản phẩm vào giỏ. Nếu số lượng yêu cầu vượt quá tồn kho, hệ thống phải hiển thị lỗi và không cho phép thêm.</li></ul><p id="3b9341b8-7456-41a6-81b9-ece9ead354f2" class=""><strong>[FR-CHECKOUT] - Nhóm chức năng Đặt hàng và Thanh toán</strong></p><ul id="73c67db6-2b08-4d4a-b4b4-05a0a3147e19" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-CHECKOUT-01:</strong> Từ giỏ hàng, người dùng (bao gồm cả khách vãng lai không cần đăng nhập) có thể tiến hành đặt hàng.</li></ul><ul id="cbb7bbaa-3b8f-42db-9b77-40ef6121b303" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-CHECKOUT-02:</strong> Quy trình đặt hàng yêu cầu người dùng điền thông tin giao hàng (có thể chọn từ sổ địa chỉ đã lưu nếu đã đăng nhập).</li></ul><ul id="459b439d-2353-4305-8e02-5f2edfd8223c" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-CHECKOUT-03:</strong> Người dùng có thể nhập mã giảm giá (voucher) để được áp dụng khuyến mãi.</li></ul><ul id="9ac001e6-6a98-450e-8234-3378fc8877ed" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-CHECKOUT-04:</strong> Người dùng có thể chọn phương thức thanh toán là &quot;Thanh toán khi nhận hàng (COD)&quot;.</li></ul><ul id="ad9cf93f-0ca3-4079-a0ed-dc05a80a723d" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-CHECKOUT-05:</strong> Sau khi hoàn tất đặt hàng, hệ thống tạo một đơn hàng mới trong DB với trạng thái &quot;Chờ xác nhận&quot; và hiển thị trang cảm ơn với mã đơn hàng.</li></ul><ul id="267272b7-27eb-4cc3-a4a3-76f4f14f0a9e" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-CHECKOUT-06:</strong> Đối với khách vãng lai, quy trình đặt hàng bắt buộc phải yêu cầu nhập địa chỉ email hợp lệ để nhận thông báo và tra cứu đơn hàng.</li></ul><ul id="9909833f-8ad5-4b45-8188-25c2be7680a7" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-CHECKOUT-07:</strong> Hệ thống nên cung cấp tùy chọn tạo tài khoản sau khi khách vãng lai đặt hàng thành công, sử dụng thông tin đã cung cấp để điền sẵn form đăng ký.</li></ul><p id="6719c292-1df2-41ec-a2eb-50bec377804e" class=""><strong>[FR-ORDER] - Nhóm chức năng Quản lý Đơn hàng</strong></p><ul id="a79a1641-9fc8-4a28-887e-cd99bf03bcfb" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-ORDER-01:</strong> Người dùng đã đăng nhập có thể xem lại lịch sử các đơn hàng đã đặt trong trang tài khoản.</li></ul><ul id="3086a478-d066-4791-9ce8-6ae176374579" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-ORDER-02:</strong> Người dùng đã đăng nhập có thể xem chi tiết từng đơn hàng.</li></ul><ul id="14f8e486-b18d-496b-b285-6b6cc0955e83" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-ORDER-03:</strong> Hệ thống phải cung cấp một trang &quot;Tra cứu đơn hàng&quot; công khai, cho phép bất kỳ ai tra cứu thông tin đơn hàng bằng cách nhập Mã đơn hàng và Email đã sử dụng khi đặt hàng.</li></ul><p id="a783be09-a2cd-4e97-86df-202d7fadd1ef" class=""><strong>[FR-REVIEW] - Nhóm chức năng Đánh giá</strong></p><ul id="ab65e993-35ad-48c7-ae8d-879f5416ddcf" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-REVIEW-01:</strong> Chỉ những người dùng đã mua sản phẩm (đơn hàng ở trạng thái &quot;Hoàn thành&quot;) mới có quyền đánh giá sản phẩm đó.</li></ul><ul id="698cec71-4ee5-4235-a80c-4dc4e4880302" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-REVIEW-02:</strong> Người dùng có thể chấm điểm (từ 1 đến 5 sao) và viết bình luận cho sản phẩm.</li></ul><ul id="275996bd-0744-80a0-a374-fd47ddc13aae" class="bulleted-list"><li style="list-style-type:disc"><strong>RR-REVIEW-03:</strong> Hệ thống phải cho phép người dùng đã đăng nhập có thể &quot;Thích&quot; (Like) một bài đánh giá. Mỗi người dùng chỉ có thể &quot;Thích&quot; một bài đánh giá một lần. Người dùng cũng có thể bỏ &quot;Thích&quot;. Tổng số lượt &quot;Thích&quot; phải được hiển thị công khai cùng với bài đánh giá đó.</li></ul><p id="b0e44a6c-fad6-46c5-951f-444ecc0a1ba7" class=""><strong>[FR-ADMIN] - Nhóm chức năng Quản trị</strong></p><ul id="ad8d4fde-63c4-4389-80b6-31b9e4cf2ee7" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-ADMIN-01 (Dashboard):</strong> Trang quản trị phải có một dashboard hiển thị các số liệu thống kê nhanh.</li></ul><ul id="d76d41b6-ea76-4d66-bd14-9796ffe8e5bf" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-ADMIN-02 (Product Mgmt):</strong> Admin có thể thực hiện CRUD trên sản phẩm. Thay vì xóa vĩnh viễn, hành động xóa sẽ chuyển sản phẩm sang trạng thái &quot;Đã ẩn&quot; (soft delete) và không hiển thị cho khách hàng.</li></ul><ul id="1cd62f4c-66f4-4169-bc9e-6df03f3a803b" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-ADMIN-03 (Category/Brand Mgmt):</strong> Admin có thể thực hiện CRUD trên Danh mục và Thương hiệu. <strong>(CẬP NHẬT) Để đảm bảo toàn vẹn dữ liệu, hệ thống phải ngăn chặn việc xóa một danh mục hoặc thương hiệu nếu vẫn còn sản phẩm đang liên kết với nó.</strong></li></ul><ul id="b2fd376b-0e79-4389-b187-56add73c4bb1" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-ADMIN-04 (Order Mgmt):</strong> Admin có thể xem danh sách tất cả đơn hàng, lọc theo trạng thái, và cập nhật trạng thái của đơn hàng.</li></ul><ul id="ba6c3754-198a-48aa-93a0-40088bc39179" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-ADMIN-05 (User Mgmt):</strong> Admin có thể xem danh sách người dùng và thực hiện hành động khóa/mở khóa tài khoản. Hành động xóa tài khoản sẽ chuyển tài khoản sang trạng thái &quot;Vô hiệu hóa&quot; thay vì xóa vĩnh viễn.</li></ul><ul id="39a5bbb6-b222-44e0-aa39-319de6634954" class="bulleted-list"><li style="list-style-type:disc"><strong>[FR-ADMIN-05.1]:</strong> Admin phải có thể xem danh sách tất cả người dùng.</li></ul><ul id="8f9a79ec-c430-42cf-a6fd-60d608699977" class="bulleted-list"><li style="list-style-type:disc"><strong>[FR-ADMIN-05.2]:</strong>Admin phải có thể tìm kiếm người dùng theo tên hoặc email.</li></ul><ul id="8e93c8e9-43c6-4cdd-bc4b-64e0678f0ac7" class="bulleted-list"><li style="list-style-type:disc"><strong>[FR-ADMIN-05.3]:</strong>Admin phải có thể thay đổi trạng thái của một tài khoản người dùng (ví dụ: từ &quot;active&quot; sang &quot;locked&quot; và ngược lại).</li></ul><ul id="8e02c3bb-2849-44f8-a0f4-7db5dd1db1c2" class="bulleted-list"><li style="list-style-type:disc"><strong>FR-ADMIN-06 (Voucher Mgmt):</strong> Admin có thể thực hiện CRUD trên mã giảm giá.</li></ul><ul id="279996bd-0744-80fe-b9b0-f9f5828f52b9" class="bulleted-list"><li style="list-style-type:disc"><strong>[FR-ADMIN-06.2]:</strong>Khi tạo voucher, Admin phải có thể quy định: mã code, loại giảm giá (% hoặc số tiền cố định), giá trị giảm, ngày hết hạn, và số lượng sử dụng tối đa.</li></ul><hr id="f07fa52b-4eb5-48da-a492-42ea8254146b"/><h3 id="324a70fe-1e92-4baa-a836-04dc027a6c78" class=""><strong>3. Yêu cầu Phi chức năng (Non-functional Requirements)</strong></h3><ul id="f84c5b71-7640-4f39-b867-fb6e11ddd184" class="bulleted-list"><li style="list-style-type:disc"><strong>NFR-01 (Hiệu năng):</strong><ul id="f53b911e-6fc3-4ac8-87c0-8a0ccb5f815a" class="bulleted-list"><li style="list-style-type:circle">Thời gian tải lần đầu của trang chủ không được vượt quá 3 giây.</li></ul></li></ul><ul id="b27be0de-7349-4c34-b57b-f72dc2d906b0" class="bulleted-list"><li style="list-style-type:disc"><strong>NFR-02 (Bảo mật):</strong><ul id="bececa8e-e156-48b0-88e2-0bf9c165af5c" class="bulleted-list"><li style="list-style-type:circle">Tất cả các API yêu cầu quyền truy cập phải được bảo vệ bằng JWT.</li></ul><ul id="279996bd-0744-80cb-9ddb-dcc70861f91a" class="bulleted-list"><li style="list-style-type:circle">Hệ thống phải sử dụng PreparedStatement trong các câu lệnh truy vấn JPA để ngăn chặn các cuộc tấn công SQL Injection.</li></ul><ul id="af924753-3d92-4e5d-b11a-08eaf3514289" class="bulleted-list"><li style="list-style-type:circle">Hệ thống phải phân quyền rõ ràng giữa các vai trò người dùng.</li></ul><ul id="05a8e75a-f8b3-4622-ae0b-3ba6a843f23d" class="bulleted-list"><li style="list-style-type:circle">Ngăn chặn các lỗ hổng bảo mật cơ bản như SQL Injection, XSS.</li></ul><ul id="a9cca4c1-e1a8-45e0-8a29-f8afac297248" class="bulleted-list"><li style="list-style-type:circle">Các phản hồi lỗi từ API phải được chuẩn hóa và không tiết lộ thông tin nhạy cảm về cấu trúc hệ thống (ví dụ: stack traces).</li></ul><ul id="140e129f-d940-4824-abc4-b5c8307b3ab6" class="bulleted-list"><li style="list-style-type:circle">Các thông tin nhạy cảm như khóa bí mật JWT, chuỗi kết nối cơ sở dữ liệu không được lưu trữ trực tiếp trong mã nguồn (hardcode) mà phải được quản lý thông qua biến môi trường.</li></ul><ul id="7e38fe1f-cd3c-4511-8a56-b740816a5c1a" class="bulleted-list"><li style="list-style-type:circle">Hệ thống phải áp dụng cơ chế giới hạn tỷ lệ (rate limiting) cho các chức năng nhạy cảm như Đăng nhập (đã được định nghĩa trong FR-AUTH-03) và Áp dụng mã giảm giá (ví dụ: 10 lần thử không thành công trong 15 phút từ cùng một địa chỉ IP) để ngăn chặn tấn công brute-force.</li></ul></li></ul><ul id="32d7dfb6-c02b-40d1-8b63-a02f6c982dd6" class="bulleted-list"><li style="list-style-type:disc"><strong>NFR-03 (Khả năng sử dụng):</strong><ul id="30b59076-756a-4098-a42e-ef7749bbfb40" class="bulleted-list"><li style="list-style-type:circle">Giao diện website phải có thiết kế đáp ứng (Responsive Design), tương thích tốt trên các trình duyệt và thiết bị phổ biến.</li></ul><ul id="0987462b-e0df-4978-9f93-4929b08f6364" class="bulleted-list"><li style="list-style-type:circle">Luồng thao tác của người dùng phải logic, đơn giản và dễ hiểu.</li></ul></li></ul><ul id="0cc6fb70-f4b1-4498-b202-62047a42feb1" class="bulleted-list"><li style="list-style-type:disc"><strong>NFR-04 (Khả năng bảo trì):</strong><ul id="ee8be706-b309-4763-95f2-29a5ca6fc615" class="bulleted-list"><li style="list-style-type:circle">Code phải tuân thủ theo Coding Convention đã thống nhất.</li></ul><ul id="2af4026c-a8a6-4fea-9759-d7837376571e" class="bulleted-list"><li style="list-style-type:circle">Các module phải được thiết kế độc lập tương đối.</li></ul><ul id="5f463fe2-56ef-4a13-8cf8-480de375cde2" class="bulleted-list"><li style="list-style-type:circle">Hệ thống nên ưu tiên sử dụng cơ chế xóa mềm (soft deletes) thay vì xóa cứng (hard deletes) đối với các dữ liệu quan trọng (sản phẩm, người dùng, danh mục) để đảm bảo khả năng khôi phục và tính toàn vẹn dữ liệu lịch sử.</li></ul></li></ul><hr id="21e1ad01-30f8-4ad6-a424-823908f60c91"/><h3 id="3a514f34-497a-4171-b30f-ff0dbd91af20" class=""><strong>4. Phân rã chức năng thành 10 Module và Phân công</strong></h3><table id="86a84e20-2cad-45c3-94a2-1979b18ddb3c" class="simple-table"><thead class="simple-table-header"><tr id="31aa3c8d-fcb3-4f2c-b03b-30fd329a3b41"><th id="Zr{g" class="simple-table-header-color simple-table-header"><strong>Module ID</strong></th><th id="V?Zg" class="simple-table-header-color simple-table-header"><strong>Tên Module</strong></th><th id="jvAJ" class="simple-table-header-color simple-table-header"><strong>Các chức năng chính (Tham chiếu mã FR)</strong></th><th id="n?OT" class="simple-table-header-color simple-table-header"><strong>Người phụ trách</strong></th></tr></thead><tbody><tr id="275996bd-0744-80e0-bb7d-f00c0e7deb29"><td id="Zr{g" class=""><strong>PM/BA</strong></td><td id="V?Zg" class=""></td><td id="jvAJ" class=""></td><td id="n?OT" class=""><strong>Đỗ Kiến Hưng</strong></td></tr><tr id="275996bd-0744-806e-856c-c41e279fc0ea"><td id="Zr{g" class=""><strong>CI/CD</strong></td><td id="V?Zg" class=""></td><td id="jvAJ" class=""></td><td id="n?OT" class=""><strong>Nguyễn Kim Tú</strong></td></tr><tr id="81c15901-f00e-4a38-8887-d09d5396f593"><td id="Zr{g" class=""><strong>M01</strong></td><td id="V?Zg" class=""><strong>Xác thực &amp; Quản lý Tài khoản</strong></td><td id="jvAJ" class="">FR-AUTH-01 -&gt; 05, FR-USER-01 -&gt; 04</td><td id="n?OT" class=""><strong>Nguyễn Kim Tú</strong></td></tr><tr id="84109a2f-756f-4a3f-9a37-914954f98285"><td id="Zr{g" class=""><strong>M02</strong></td><td id="V?Zg" class=""><strong>Quản lý Sản phẩm (Admin)</strong></td><td id="jvAJ" class="">FR-ADMIN-02</td><td id="n?OT" class=""><strong>Phan Trọng Quí</strong></td></tr><tr id="b8e6d942-c642-47fb-9260-a33b6410fa61"><td id="Zr{g" class=""><strong>M03</strong></td><td id="V?Zg" class=""><strong>Quản lý Danh mục &amp; Thương hiệu (Admin)</strong></td><td id="jvAJ" class="">FR-ADMIN-03</td><td id="n?OT" class=""><strong>Huỳnh Ngọc Thạch</strong></td></tr><tr id="f3fade2e-4ca1-40c4-99ac-82793c7d6c37"><td id="Zr{g" class=""><strong>M04</strong></td><td id="V?Zg" class=""><strong>Hiển thị Sản phẩm &amp; Tìm kiếm (Client)</strong></td><td id="jvAJ" class="">FR-PRODUCT-01 -&gt; 07</td><td id="n?OT" class=""><strong>Trần Quốc Giăng</strong></td></tr><tr id="1d1d7304-a96f-4e4d-8100-a38002c5719c"><td id="Zr{g" class=""><strong>M05</strong></td><td id="V?Zg" class=""><strong>Giỏ hàng (Shopping Cart)</strong></td><td id="jvAJ" class="">FR-CART-01 -&gt; 05. <strong>Lưu giỏ hàng vào Local Storage cho khách và đồng bộ với DB khi người dùng đăng nhập.</strong></td><td id="n?OT" class=""><strong>Lưu Trần Kim Phú</strong></td></tr><tr id="1bd549e0-76ef-4960-b834-c7a5ddd97c98"><td id="Zr{g" class=""><strong>M06</strong></td><td id="V?Zg" class=""><strong>Đặt hàng &amp; Thanh toán (Checkout)</strong></td><td id="jvAJ" class="">FR-CHECKOUT-01 -&gt; 07. <strong>Tích hợp API tạo đơn hàng cho cả người dùng đã đăng nhập và khách vãng lai.</strong></td><td id="n?OT" class=""><strong>Đỗ Kiến Hưng</strong></td></tr><tr id="9f93776d-4279-4d7f-8864-313455d3f15c"><td id="Zr{g" class=""><strong>M07</strong></td><td id="V?Zg" class=""><strong>Quản lý Đơn hàng (Client &amp; Admin)</strong></td><td id="jvAJ" class="">FR-ORDER-01 -&gt; 03 (Client) &amp; FR-ADMIN-04 (Admin). <strong>Xây dựng trang Lịch sử đơn hàng, Quản lý đơn hàng, và trang Tra cứu đơn hàng công khai.</strong></td><td id="n?OT" class=""><strong>Ngọc Thạch + Trọng Phú</strong></td></tr><tr id="19cfaa38-c150-4f0e-a421-ba43ef15695d"><td id="Zr{g" class=""><strong>M08</strong></td><td id="V?Zg" class=""><strong>Đánh giá &amp; Bình luận (Review &amp; Comment)</strong></td><td id="jvAJ" class="">FR-REVIEW-01 → 03</td><td id="n?OT" class=""><strong>Huỳnh Hữu Huy</strong></td></tr><tr id="6c44c9a7-e7e6-4ee6-9edd-62268a7dde22"><td id="Zr{g" class=""><strong>M09</strong></td><td id="V?Zg" class=""><strong>Quản lý Người dùng (Admin)</strong></td><td id="jvAJ" class="">FR-ADMIN-05</td><td id="n?OT" class=""><strong>Phan Trọng Phú</strong></td></tr><tr id="7874a9e9-f21c-4190-aeff-74cb37699d8a"><td id="Zr{g" class=""><strong>M10</strong></td><td id="V?Zg" class=""><strong>Khuyến mãi &amp; Mã giảm giá (Voucher)</strong></td><td id="jvAJ" class="">FR-ADMIN-06</td><td id="n?OT" class=""><strong>Nguyễn Văn Quang Duy</strong></td></tr></tbody></table></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

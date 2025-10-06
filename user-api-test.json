@@ -1,0 +1,166 @@
+{
+  "info": {
+    "name": "User Management API Tests",
+    "_postman_id": "user-api-tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"Test@123\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/v1/auth/login",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "v1", "auth", "login"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var jsonData = pm.response.json();",
+              "if (jsonData.success && jsonData.data && jsonData.data.accessToken) {",
+              "    pm.environment.set(\"access_token\", jsonData.data.accessToken);",
+              "    console.log(\"Token saved: \" + jsonData.data.accessToken);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Get Current User",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/v1/user/me",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "v1", "user", "me"]
+        }
+      }
+    },
+    {
+      "name": "3. Get Addresses",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/v1/user/addresses",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "v1", "user", "addresses"]
+        }
+      }
+    },
+    {
+      "name": "4. Add Address",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"recipientName\": \"Nguyễn Văn A\",\n  \"phoneNumber\": \"0123456789\",\n  \"street\": \"123 Đường ABC\",\n  \"ward\": \"Phường 1\",\n  \"district\": \"Quận 1\",\n  \"city\": \"TP.HCM\",\n  \"isDefault\": true\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/v1/user/addresses",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "v1", "user", "addresses"]
+        }
+      }
+    },
+    {
+      "name": "5. Update Profile",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fullName\": \"Nguyễn Văn Test Updated\",\n  \"phoneNumber\": \"0987654321\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/v1/user/profile",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "v1", "user", "profile"]
+        }
+      }
+    },
+    {
+      "name": "6. Change Password",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"oldPassword\": \"Test@123\",\n  \"newPassword\": \"NewTest@123\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/v1/user/password",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "v1", "user", "password"]
+        }
+      }
+    }
+  ]
+}

@@ -16,6 +16,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    @NotBlank(message = "Tên đăng nhập không được để trống")
+    @Size(min = 3, max = 50, message = "Tên đăng nhập phải từ 3-50 ký tự")
+    @Column(name = "username", nullable = false, unique = true)
+    private String username;
+    
     @NotBlank(message = "Họ và tên không được để trống")
     @Size(max = 100, message = "Họ và tên không được quá 100 ký tự")
     @Column(name = "full_name", nullable = false)
@@ -37,11 +42,11 @@ public class User {
     
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
-    private UserRole role = UserRole.CUSTOMER;
+    private UserRole role = UserRole.customer;
     
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private UserStatus status = UserStatus.ACTIVE;
+    private UserStatus status = UserStatus.active;
     
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -56,8 +61,8 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Order> orders = new ArrayList<>();
     
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Cart cart;
+    // @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // private Cart cart;
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Review> reviews = new ArrayList<>();
@@ -68,8 +73,9 @@ public class User {
         this.updatedAt = LocalDateTime.now();
     }
     
-    public User(String fullName, String email, String passwordHash) {
+    public User(String username, String fullName, String email, String passwordHash) {
         this();
+        this.username = username;
         this.fullName = fullName;
         this.email = email;
         this.passwordHash = passwordHash;
@@ -88,6 +94,14 @@ public class User {
     
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    public String getUsername() {
+        return username;
+    }
+    
+    public void setUsername(String username) {
+        this.username = username;
     }
     
     public String getFullName() {
@@ -170,13 +184,13 @@ public class User {
         this.orders = orders;
     }
     
-    public Cart getCart() {
-        return cart;
-    }
+    // public Cart getCart() {
+    //     return cart;
+    // }
     
-    public void setCart(Cart cart) {
-        this.cart = cart;
-    }
+    // public void setCart(Cart cart) {
+    //     this.cart = cart;
+    // }
     
     public List<Review> getReviews() {
         return reviews;
@@ -188,10 +202,10 @@ public class User {
     
     // Enums
     public enum UserRole {
-        CUSTOMER, ADMIN
+        customer, admin
     }
     
     public enum UserStatus {
-        ACTIVE, LOCKED, PENDING
+        active, locked, pending
     }
 }
