@@ -11,6 +11,7 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+
 # Set Maven environment
 ENV MAVEN_HOME=/opt/maven
 ENV PATH="$MAVEN_HOME/bin:$PATH"
