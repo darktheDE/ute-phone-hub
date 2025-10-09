@@ -37,12 +37,14 @@ public class UserService {
     private final AddressRepository addressRepository;
     private final PasswordUtil passwordUtil;
     private final JwtUtil jwtUtil;
+    private final RedisService redisService;
     
     public UserService() {
         this.userRepository = new UserRepository();
         this.addressRepository = new AddressRepository();
         this.passwordUtil = new PasswordUtil();
         this.jwtUtil = new JwtUtil();
+        this.redisService = new RedisService();
     }
     
     /**
@@ -78,13 +80,18 @@ public class UserService {
         // Lưu user
         user = userRepository.save(user);
         
-        // Tạo access token
+        // Tạo access token và refresh token
         String accessToken = jwtUtil.generateToken(user.getEmail());
+        String refreshToken = jwtUtil.generateRefreshToken(user.getEmail());
+        
+        // Store refresh token in Redis (7 days TTL)
+        redisService.storeRefreshToken(user.getEmail(), refreshToken);
         
         logger.info("User registered successfully: {}", user.getEmail());
         
         return new LoginResponse(
             accessToken,
+            refreshToken,
             convertToUserResponse(user)
         );
     }
@@ -123,13 +130,18 @@ public class UserService {
             throw new RuntimeException("Tên đăng nhập hoặc mật khẩu không đúng");
         }
         
-        // Tạo access token
+        // Tạo access token và refresh token
         String accessToken = jwtUtil.generateToken(user.getEmail());
+        String refreshToken = jwtUtil.generateRefreshToken(user.getEmail());
+        
+        // Store refresh token in Redis (7 days TTL)
+        redisService.storeRefreshToken(user.getEmail(), refreshToken);
         
         logger.info("User logged in successfully: {}", user.getEmail());
         
         return new LoginResponse(
             accessToken,
+            refreshToken,
             convertToUserResponse(user)
         );
     }
@@ -386,9 +398,14 @@ public class UserService {
         
         User user = userOpt.get();
         
+        // Get existing addresses
+        List<Address> existingAddresses = addressRepository.findByUser(user);
+        
+        // Auto set as default if this is the first address
+        boolean shouldBeDefault = request.isDefault() || existingAddresses.isEmpty();
+        
         // If this is set as default, unset other defaults
-        if (request.isDefault()) {
-            List<Address> existingAddresses = addressRepository.findByUser(user);
+        if (shouldBeDefault) {
             for (Address addr : existingAddresses) {
                 if (addr.getIsDefault()) {
                     addr.setIsDefault(false);
@@ -402,12 +419,15 @@ public class UserService {
         address.setRecipientName(request.getRecipientName());
         address.setPhoneNumber(request.getPhoneNumber());
         address.setStreetAddress(request.getStreetAddress());
-        address.setCity(request.getCity());
-        address.setIsDefault(request.isDefault());
+        address.setProvince(request.getProvince());
+        address.setProvinceCode(request.getProvinceCode());
+        address.setWard(request.getWard());
+        address.setWardCode(request.getWardCode());
+        address.setIsDefault(shouldBeDefault);
         
         address = addressRepository.save(address);
         
-        logger.info("Address added successfully for user: {}", email);
+        logger.info("Address added successfully for user: {} (default: {})", email, shouldBeDefault);
         return convertToAddressResponse(address);
     }
     
@@ -456,7 +476,10 @@ public class UserService {
         address.setRecipientName(request.getRecipientName());
         address.setPhoneNumber(request.getPhoneNumber());
         address.setStreetAddress(request.getStreetAddress());
-        address.setCity(request.getCity());
+        address.setProvince(request.getProvince());
+        address.setProvinceCode(request.getProvinceCode());
+        address.setWard(request.getWard());
+        address.setWardCode(request.getWardCode());
         address.setIsDefault(request.isDefault());
         address.setUpdatedAt(LocalDateTime.now());
         
@@ -493,7 +516,22 @@ public class UserService {
             throw new RuntimeException("Bạn không có quyền xóa địa chỉ này");
         }
         
+        boolean wasDefault = address.getIsDefault();
+        
+        // Delete the address
         addressRepository.delete(address);
+        
+        // If deleted address was default, set another address as default
+        if (wasDefault) {
+            List<Address> remainingAddresses = addressRepository.findByUser(user);
+            if (!remainingAddresses.isEmpty()) {
+                // Set first remaining address as default
+                Address firstAddress = remainingAddresses.get(0);
+                firstAddress.setIsDefault(true);
+                addressRepository.update(firstAddress);
+                logger.info("Set address {} as default after deleting default address", firstAddress.getId());
+            }
+        }
         
         logger.info("Address deleted successfully for user: {}", email);
     }
@@ -515,8 +553,73 @@ public class UserService {
             throw new RuntimeException("Địa chỉ không được để trống");
         }
         
-        if (request.getCity() == null || request.getCity().trim().isEmpty()) {
-            throw new RuntimeException("Thành phố không được để trống");
+        if (request.getProvince() == null || request.getProvince().trim().isEmpty()) {
+            throw new RuntimeException("Tỉnh/Thành phố không được để trống");
+        }
+        
+        if (request.getWard() == null || request.getWard().trim().isEmpty()) {
+            throw new RuntimeException("Xã/Phường không được để trống");
+        }
+    }
+    
+    /**
+     * Check if email exists
+     * @param email Email to check
+     * @return true if email exists
+     */
+    public boolean isEmailExists(String email) {
+        try {
+            return userRepository.findByEmail(email).isPresent();
+        } catch (Exception e) {
+            logger.error("Error checking if email exists: {}", email, e);
+            return false;
+        }
+    }
+    
+    /**
+     * Reset password for user
+     * @param email User email
+     * @param newPassword New password
+     * @return true if success
+     */
+    public boolean resetPassword(String email, String newPassword) {
+        try {
+            System.out.println("=== UserService.resetPassword() ===");
+            System.out.println("Email: " + email);
+            System.out.println("New password length: " + newPassword.length());
+            
+            // Find user by email
+            Optional<User> optionalUser = userRepository.findByEmail(email);
+            System.out.println("User found: " + optionalUser.isPresent());
+            
+            if (!optionalUser.isPresent()) {
+                logger.warn("User not found with email: {}", email);
+                return false;
+            }
+            
+            User user = optionalUser.get();
+            System.out.println("User ID: " + user.getId());
+            
+            // Hash new password
+            String hashedPassword = passwordUtil.hashPassword(newPassword);
+            System.out.println("Password hashed, length: " + hashedPassword.length());
+            
+            user.setPasswordHash(hashedPassword);
+            user.setUpdatedAt(LocalDateTime.now());
+            
+            // Update user
+            System.out.println("Saving user...");
+            User updatedUser = userRepository.save(user);
+            System.out.println("User saved: " + (updatedUser != null));
+            
+            logger.info("Password reset successfully for user: {}", email);
+            return updatedUser != null;
+            
+        } catch (Exception e) {
+            System.out.println("Exception in resetPassword: " + e.getMessage());
+            e.printStackTrace();
+            logger.error("Error resetting password for user: {}", email, e);
+            return false;
         }
     }
     
@@ -531,7 +634,10 @@ public class UserService {
         response.setRecipientName(address.getRecipientName());
         response.setPhoneNumber(address.getPhoneNumber());
         response.setStreetAddress(address.getStreetAddress());
-        response.setCity(address.getCity());
+        response.setProvince(address.getProvince());
+        response.setProvinceCode(address.getProvinceCode());
+        response.setWard(address.getWard());
+        response.setWardCode(address.getWardCode());
         response.setDefault(address.getIsDefault());
         return response;
     }

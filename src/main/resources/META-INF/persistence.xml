@@ -26,11 +26,9 @@
         
         <!-- Database Properties -->
         <properties>
-            <!-- Database Connection -->
+            <!-- Database Connection - Will be overridden by DatabaseConfig from .env -->
             <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
-            <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://postgres:5432/utephonehub_dev"/>
-            <property name="jakarta.persistence.jdbc.user" value="utephonehub_user"/>
-            <property name="jakarta.persistence.jdbc.password" value="utephonehub_password"/>
+            <!-- URL, user, password will be set by DatabaseConfig.java from environment variables -->
             
             <!-- Hibernate Properties -->
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>

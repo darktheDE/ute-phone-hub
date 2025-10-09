@@ -11,6 +11,72 @@ loginBtn.addEventListener("click", () => {
   container.classList.remove("active");
 });
 
+// ============================================
+// TOAST NOTIFICATION SYSTEM
+// ============================================
+
+// Create toast container if it doesn't exist
+function ensureToastContainer() {
+  let container = document.querySelector(".toast-container");
+  if (!container) {
+    container = document.createElement("div");
+    container.className = "toast-container";
+    document.body.appendChild(container);
+  }
+  return container;
+}
+
+// Show toast notification
+function showToast(message, type = "info", title = null) {
+  const container = ensureToastContainer();
+
+  const icons = {
+    success: "✓",
+    error: "✕",
+    warning: "⚠",
+    info: "ℹ",
+  };
+
+  const titles = {
+    success: title || "Thành công",
+    error: title || "Lỗi",
+    warning: title || "Cảnh báo",
+    info: title || "Thông báo",
+  };
+
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `
+    <div class="toast-icon">${icons[type]}</div>
+    <div class="toast-content">
+      <div class="toast-title">${titles[type]}</div>
+      <div class="toast-message">${message}</div>
+    </div>
+    <button class="toast-close">&times;</button>
+  `;
+
+  container.appendChild(toast);
+
+  // Auto close after 5 seconds
+  const autoCloseTimer = setTimeout(() => {
+    closeToast(toast);
+  }, 5000);
+
+  // Close button handler
+  toast.querySelector(".toast-close").addEventListener("click", () => {
+    clearTimeout(autoCloseTimer);
+    closeToast(toast);
+  });
+}
+
+// Close toast with animation
+function closeToast(toast) {
+  toast.classList.add("hiding");
+  setTimeout(() => {
+    toast.remove();
+  }, 300);
+}
+
 // Utility functions
 function showMessage(elementId, message, isError = false) {
   const element = document.getElementById(elementId);
@@ -60,8 +126,11 @@ document
       const data = await response.json();
 
       if (data.success) {
-        // Store token and user info
+        // Store tokens and user info
         localStorage.setItem("accessToken", data.data.accessToken);
+        if (data.data.refreshToken) {
+          localStorage.setItem("refreshToken", data.data.refreshToken);
+        }
         localStorage.setItem("user", JSON.stringify(data.data.user));
 
         showMessage("successMessage", "Đăng nhập thành công!");
@@ -123,6 +192,19 @@ document
 
     if (registerData.password.length < 6) {
       showMessage("regErrorMessage", "Mật khẩu phải có ít nhất 6 ký tự!", true);
+      return;
+    }
+
+    // Password must contain at least one letter and one number
+    const hasLetter = /[a-zA-Z]/.test(registerData.password);
+    const hasNumber = /\d/.test(registerData.password);
+
+    if (!hasLetter || !hasNumber) {
+      showMessage(
+        "regErrorMessage",
+        "Mật khẩu phải chứa ít nhất một chữ cái và một số!",
+        true
+      );
       return;
     }
 
@@ -188,3 +270,429 @@ document.querySelectorAll("input").forEach((input) => {
     }
   });
 });
+
+// ============================================
+// FORGOT PASSWORD MODAL
+// ============================================
+
+const forgotPasswordModal = document.getElementById("forgotPasswordModal");
+const forgotPasswordLink = document.getElementById("forgotPasswordLink");
+const closeForgotPassword = document.querySelector(".close-forgot-password");
+let currentStep = 1;
+let forgotEmail = "";
+
+// Open modal
+forgotPasswordLink.addEventListener("click", function (e) {
+  e.preventDefault();
+  forgotPasswordModal.classList.add("show");
+  resetForgotPasswordModal();
+});
+
+// Close modal
+closeForgotPassword.addEventListener("click", function () {
+  forgotPasswordModal.classList.remove("show");
+});
+
+// Close on outside click
+window.addEventListener("click", function (e) {
+  if (e.target === forgotPasswordModal) {
+    forgotPasswordModal.classList.remove("show");
+  }
+});
+
+// Reset modal to step 1
+function resetForgotPasswordModal() {
+  currentStep = 1;
+  showStep(1);
+  document.getElementById("forgotPasswordForm").reset();
+  document.getElementById("verifyOtpForm").reset();
+  document.getElementById("resetPasswordForm").reset();
+  hideMessage("forgotErrorMessage");
+  hideMessage("otpErrorMessage");
+  hideMessage("resetErrorMessage");
+  hideMessage("resetSuccessMessage");
+}
+
+// Show specific step
+function showStep(step) {
+  document.getElementById("step1").style.display =
+    step === 1 ? "block" : "none";
+  document.getElementById("step2").style.display =
+    step === 2 ? "block" : "none";
+  document.getElementById("step3").style.display =
+    step === 3 ? "block" : "none";
+  currentStep = step;
+}
+
+// Step 1: Send OTP
+document
+  .getElementById("forgotPasswordForm")
+  .addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const email = document.getElementById("forgotEmail").value;
+    const sendOtpBtn = document.getElementById("sendOtpBtn");
+    const btnText = sendOtpBtn.querySelector(".btn-text");
+    const btnLoading = sendOtpBtn.querySelector(".btn-loading");
+
+    hideMessage("forgotErrorMessage");
+
+    // Show loading
+    btnText.style.display = "none";
+    btnLoading.style.display = "inline-flex";
+    sendOtpBtn.disabled = true;
+
+    try {
+      const response = await fetch("/api/v1/auth/forgot-password/request", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: email }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        forgotEmail = email;
+        showToast(
+          data.message || "Mã xác nhận đã được gửi đến email của bạn",
+          "success"
+        );
+        showStep(2);
+      } else {
+        showToast(data.message || "Có lỗi xảy ra, vui lòng thử lại!", "error");
+        showMessage(
+          "forgotErrorMessage",
+          data.message || "Có lỗi xảy ra, vui lòng thử lại!",
+          true
+        );
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      showToast("Không thể kết nối đến server!", "error");
+      showMessage("forgotErrorMessage", "Không thể kết nối đến server!", true);
+    } finally {
+      btnText.style.display = "inline";
+      btnLoading.style.display = "none";
+      sendOtpBtn.disabled = false;
+    }
+  });
+
+// Step 2: Verify OTP
+document
+  .getElementById("verifyOtpForm")
+  .addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const otp = document.getElementById("otpCode").value;
+    const verifyOtpBtn = document.getElementById("verifyOtpBtn");
+    const btnText = verifyOtpBtn.querySelector(".btn-text");
+    const btnLoading = verifyOtpBtn.querySelector(".btn-loading");
+
+    hideMessage("otpErrorMessage");
+
+    // Validate OTP format
+    if (!/^\d{6}$/.test(otp)) {
+      showToast("Mã xác nhận phải gồm 6 chữ số!", "error");
+      showMessage("otpErrorMessage", "Mã xác nhận phải gồm 6 chữ số!", true);
+      return;
+    }
+
+    // Show loading
+    btnText.style.display = "none";
+    btnLoading.style.display = "inline-flex";
+    verifyOtpBtn.disabled = true;
+
+    try {
+      const response = await fetch("/api/v1/auth/forgot-password/verify", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: forgotEmail,
+          otp: otp,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        showToast("Xác nhận mã thành công!", "success");
+        showStep(3);
+      } else {
+        showToast(data.message || "Mã xác nhận không hợp lệ!", "error");
+        showMessage(
+          "otpErrorMessage",
+          data.message || "Mã xác nhận không hợp lệ!",
+          true
+        );
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      showToast("Không thể kết nối đến server!", "error");
+      showMessage("otpErrorMessage", "Không thể kết nối đến server!", true);
+    } finally {
+      btnText.style.display = "inline";
+      btnLoading.style.display = "none";
+      verifyOtpBtn.disabled = false;
+    }
+  });
+
+// Resend OTP
+document
+  .getElementById("resendOtp")
+  .addEventListener("click", async function (e) {
+    e.preventDefault();
+
+    const resendButton = this;
+
+    // Check if button is disabled (cooldown active)
+    if (resendButton.disabled) {
+      return;
+    }
+
+    hideMessage("otpErrorMessage");
+    showToast("Đang gửi lại mã xác nhận...", "info");
+
+    // Disable button temporarily
+    resendButton.disabled = true;
+
+    try {
+      const response = await fetch("/api/v1/auth/forgot-password/request", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: forgotEmail }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        showToast("Mã xác nhận mới đã được gửi đến email của bạn!", "success");
+        // Clear OTP input
+        document.getElementById("otpCode").value = "";
+
+        // Start 60 second cooldown
+        let countdown = 60;
+        const originalText = resendButton.textContent;
+
+        const countdownInterval = setInterval(() => {
+          resendButton.textContent = `Gửi lại (${countdown}s)`;
+          countdown--;
+
+          if (countdown < 0) {
+            clearInterval(countdownInterval);
+            resendButton.textContent = originalText;
+            resendButton.disabled = false;
+          }
+        }, 1000);
+      } else {
+        showToast(data.message || "Không thể gửi lại mã!", "error");
+        showMessage(
+          "otpErrorMessage",
+          data.message || "Không thể gửi lại mã!",
+          true
+        );
+        resendButton.disabled = false;
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      showToast("Không thể kết nối đến server!", "error");
+      showMessage("otpErrorMessage", "Không thể kết nối đến server!", true);
+      resendButton.disabled = false;
+    }
+  });
+
+// Step 3: Reset Password
+document
+  .getElementById("resetPasswordForm")
+  .addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const newPassword = document.getElementById("newPassword").value;
+    const confirmPassword = document.getElementById(
+      "resetConfirmPassword"
+    ).value;
+    const resetPasswordBtn = document.getElementById("resetPasswordBtn");
+    const btnText = resetPasswordBtn.querySelector(".btn-text");
+    const btnLoading = resetPasswordBtn.querySelector(".btn-loading");
+
+    hideMessage("resetErrorMessage");
+    hideMessage("resetSuccessMessage");
+
+    // Validate passwords
+    if (newPassword.length < 6) {
+      showToast("Mật khẩu phải có ít nhất 6 ký tự!", "error");
+      showMessage(
+        "resetErrorMessage",
+        "Mật khẩu phải có ít nhất 6 ký tự!",
+        true
+      );
+      return;
+    }
+
+    // Password must contain at least one letter and one number
+    const hasLetter = /[a-zA-Z]/.test(newPassword);
+    const hasNumber = /\d/.test(newPassword);
+
+    if (!hasLetter || !hasNumber) {
+      showToast("Mật khẩu phải chứa ít nhất một chữ cái và một số!", "error");
+      showMessage(
+        "resetErrorMessage",
+        "Mật khẩu phải chứa ít nhất một chữ cái và một số!",
+        true
+      );
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      showToast("Mật khẩu xác nhận không khớp!", "error");
+      showMessage("resetErrorMessage", "Mật khẩu xác nhận không khớp!", true);
+      return;
+    }
+
+    // Show loading
+    btnText.style.display = "none";
+    btnLoading.style.display = "inline-flex";
+    resetPasswordBtn.disabled = true;
+
+    try {
+      const response = await fetch("/api/v1/auth/forgot-password/reset", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: forgotEmail,
+          otp: document.getElementById("otpCode").value,
+          newPassword: newPassword,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        showToast(
+          "Đặt lại mật khẩu thành công! Đang chuyển hướng đến trang đăng nhập...",
+          "success"
+        );
+        showMessage(
+          "resetSuccessMessage",
+          "Đặt lại mật khẩu thành công!",
+          false
+        );
+
+        // Close modal and redirect to login after 2 seconds
+        setTimeout(() => {
+          forgotPasswordModal.classList.remove("show");
+          resetForgotPasswordModal();
+
+          // Redirect to home page (which shows login)
+          window.location.href = "/login";
+        }, 2000);
+      } else {
+        showToast(data.message || "Có lỗi xảy ra, vui lòng thử lại!", "error");
+        showMessage(
+          "resetErrorMessage",
+          data.message || "Có lỗi xảy ra, vui lòng thử lại!",
+          true
+        );
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      showToast("Không thể kết nối đến server!", "error");
+      showMessage("resetErrorMessage", "Không thể kết nối đến server!", true);
+    } finally {
+      btnText.style.display = "inline";
+      btnLoading.style.display = "none";
+      resetPasswordBtn.disabled = false;
+    }
+  });
+
+// ============================================
+// LOGOUT AND TOKEN MANAGEMENT
+// ============================================
+
+/**
+ * Logout function - Call API to delete refresh token
+ */
+async function logout() {
+  const token = localStorage.getItem("accessToken");
+
+  if (token) {
+    try {
+      const response = await fetch("/api/v1/auth/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ accessToken: token }),
+      });
+
+      const data = await response.json();
+      console.log("Logout response:", data);
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  }
+
+  // Clear local storage
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
+  localStorage.removeItem("user");
+
+  // Clear cookies (refresh token cookie)
+  document.cookie =
+    "refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Lax";
+
+  // Redirect to home or login
+  window.location.href = "/";
+}
+
+/**
+ * Refresh access token using refresh token
+ */
+async function refreshAccessToken() {
+  const refreshToken = localStorage.getItem("refreshToken");
+
+  if (!refreshToken) {
+    console.error("No refresh token found");
+    return null;
+  }
+
+  try {
+    const response = await fetch("/api/v1/auth/refresh", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ refreshToken: refreshToken }),
+    });
+
+    const data = await response.json();
+
+    if (data.success && data.data.accessToken) {
+      // Update access token
+      localStorage.setItem("accessToken", data.data.accessToken);
+      console.log("Access token refreshed successfully");
+      return data.data.accessToken;
+    } else {
+      console.error("Failed to refresh token:", data.message);
+      // Refresh token invalid, logout
+      logout();
+      return null;
+    }
+  } catch (error) {
+    console.error("Error refreshing token:", error);
+    logout();
+    return null;
+  }
+}
+
+// Make logout function globally available
+window.logout = logout;
+window.refreshAccessToken = refreshAccessToken;

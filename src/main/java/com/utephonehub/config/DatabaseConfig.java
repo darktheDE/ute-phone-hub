@@ -32,18 +32,27 @@ public class DatabaseConfig {
         try {
             logger.info("Initializing EntityManagerFactory...");
             
+            // Load .env file if exists
+            loadEnvFile();
+            
             // Tạo properties map với environment variables override
             Map<String, String> properties = new HashMap<>();
             
-            // Database connection từ environment variables
-            String dbUrl = System.getenv("DB_URL");
-            String dbUser = System.getenv("DB_USER");
-            String dbPassword = System.getenv("DB_PASSWORD");
+            // Build JDBC URL from environment variables or system properties
+            String dbHost = getEnvOrProperty("DB_HOST");
+            String dbPort = getEnvOrProperty("DB_PORT");
+            String dbName = getEnvOrProperty("DB_NAME");
+            String dbUser = getEnvOrProperty("DB_USER");
+            String dbPassword = getEnvOrProperty("DB_PASSWORD");
             
-            if (dbUrl != null) {
-                properties.put("jakarta.persistence.jdbc.url", dbUrl);
-                logger.info("Using database URL from environment: {}", dbUrl);
+            // Construct JDBC URL if components are provided
+            if (dbHost != null && dbName != null) {
+                String port = dbPort != null ? dbPort : "5432";
+                String jdbcUrl = String.format("jdbc:postgresql://%s:%s/%s", dbHost, port, dbName);
+                properties.put("jakarta.persistence.jdbc.url", jdbcUrl);
+                logger.info("Using database URL: {}", jdbcUrl);
             }
+            
             if (dbUser != null) {
                 properties.put("jakarta.persistence.jdbc.user", dbUser);
                 logger.info("Using database user from environment: {}", dbUser);
@@ -59,6 +68,54 @@ public class DatabaseConfig {
             logger.error("Failed to initialize EntityManagerFactory", e);
             throw new RuntimeException("Database initialization failed", e);
         }
+    }
+    
+    /**
+     * Load .env file for local development
+     */
+    private static void loadEnvFile() {
+        try {
+            java.nio.file.Path envPath = java.nio.file.Paths.get(".env");
+            if (java.nio.file.Files.exists(envPath)) {
+                logger.info("Loading .env file for local development");
+                java.util.List<String> lines = java.nio.file.Files.readAllLines(envPath);
+                for (String line : lines) {
+                    line = line.trim();
+                    if (line.isEmpty() || line.startsWith("#")) continue;
+                    
+                    int equalsIndex = line.indexOf('=');
+                    if (equalsIndex > 0) {
+                        String key = line.substring(0, equalsIndex).trim();
+                        String value = line.substring(equalsIndex + 1).trim();
+                        
+                        // Remove quotes if present
+                        if (value.startsWith("\"") && value.endsWith("\"")) {
+                            value = value.substring(1, value.length() - 1);
+                        }
+                        
+                        // Only set if not already set by system
+                        if (System.getenv(key) == null) {
+                            // Note: Cannot modify System.getenv, so we'll use System.setProperty
+                            System.setProperty(key, value);
+                            logger.debug("Loaded env variable: {}", key);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.warn("Could not load .env file: {}", e.getMessage());
+        }
+    }
+    
+    /**
+     * Get environment variable or system property
+     */
+    private static String getEnvOrProperty(String key) {
+        String value = System.getenv(key);
+        if (value == null) {
+            value = System.getProperty(key);
+        }
+        return value;
     }
     
     /**

@@ -16,11 +16,22 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
       name="keywords"
       content="điện thoại, laptop, phụ kiện, iPhone, Samsung, MacBook, iPad"
     />
-    
+
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/static/favicon.png">
-    <link rel="shortcut icon" type="image/png" href="${pageContext.request.contextPath}/static/favicon.png">
-    <link rel="apple-touch-icon" href="${pageContext.request.contextPath}/static/favicon.png">
+    <link
+      rel="icon"
+      type="image/png"
+      href="${pageContext.request.contextPath}/static/favicon.png"
+    />
+    <link
+      rel="shortcut icon"
+      type="image/png"
+      href="${pageContext.request.contextPath}/static/favicon.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      href="${pageContext.request.contextPath}/static/favicon.png"
+    />
 
     <!-- CSS -->
     <link
@@ -40,6 +51,14 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Google Fonts - Roboto -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
     />
 
     <!-- Favicon -->
@@ -913,11 +932,16 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
           logoutBtn.addEventListener("click", function (e) {
             e.preventDefault();
 
-            // Remove token
-            localStorage.removeItem("accessToken");
-
-            // Redirect to home
-            window.location.href = "${pageContext.request.contextPath}/";
+            // Use global logout function from auth.js
+            if (typeof logout === "function") {
+              logout();
+            } else {
+              // Fallback: clear storage and redirect
+              localStorage.removeItem("accessToken");
+              localStorage.removeItem("refreshToken");
+              localStorage.removeItem("user");
+              window.location.href = "${pageContext.request.contextPath}/";
+            }
           });
         }
 

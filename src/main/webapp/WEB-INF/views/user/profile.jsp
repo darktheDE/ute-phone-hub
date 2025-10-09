@@ -7,11 +7,19 @@ uri="http://java.sun.com/jsp/jstl/core" %>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tài khoản của tôi - UTE Phone Hub</title>
-    
+
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/static/favicon.png">
-    <link rel="shortcut icon" type="image/png" href="${pageContext.request.contextPath}/static/favicon.png">
-    
+    <link
+      rel="icon"
+      type="image/png"
+      href="${pageContext.request.contextPath}/static/favicon.png"
+    />
+    <link
+      rel="shortcut icon"
+      type="image/png"
+      href="${pageContext.request.contextPath}/static/favicon.png"
+    />
+
     <link
       rel="stylesheet"
       href="${pageContext.request.contextPath}/static/css/main.css"
@@ -24,6 +32,21 @@ uri="http://java.sun.com/jsp/jstl/core" %>
       rel="stylesheet"
       href="${pageContext.request.contextPath}/static/css/pages/profile.css"
     />
+
+    <!-- Google Fonts - Roboto -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Choices.js for searchable select -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/choices.js@10.2.0/public/assets/styles/choices.min.css"
+    />
+
     <link
       href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
       rel="stylesheet"
@@ -137,10 +160,10 @@ uri="http://java.sun.com/jsp/jstl/core" %>
               />
             </div>
             <div class="form-group">
-              <label>Xác nhận mật khẩu mới</label>
+              <label for="profileConfirmPassword">Xác nhận mật khẩu mới</label>
               <input
                 type="password"
-                id="confirmPassword"
+                id="profileConfirmPassword"
                 name="confirmPassword"
                 required
               />
@@ -192,17 +215,33 @@ uri="http://java.sun.com/jsp/jstl/core" %>
             <input type="tel" id="recipientPhone" name="phoneNumber" required />
           </div>
           <div class="form-group">
-            <label>Địa chỉ</label>
+            <label>Tỉnh/Thành phố</label>
+            <select
+              id="province"
+              name="province"
+              class="searchable-select"
+              required
+            >
+              <option value="">-- Chọn Tỉnh/Thành phố --</option>
+            </select>
+            <input type="hidden" id="provinceCode" name="provinceCode" />
+          </div>
+          <div class="form-group">
+            <label>Xã/Phường/Thị trấn</label>
+            <select id="ward" name="ward" class="searchable-select" required>
+              <option value="">-- Chọn Xã/Phường --</option>
+            </select>
+            <input type="hidden" id="wardCode" name="wardCode" />
+          </div>
+          <div class="form-group">
+            <label>Địa chỉ cụ thể</label>
             <input
               type="text"
               id="streetAddress"
               name="streetAddress"
+              placeholder="Số nhà, tên đường..."
               required
             />
-          </div>
-          <div class="form-group">
-            <label>Thành phố</label>
-            <input type="text" id="city" name="city" required />
           </div>
           <div class="form-group checkbox-group">
             <label>
@@ -216,6 +255,9 @@ uri="http://java.sun.com/jsp/jstl/core" %>
       </div>
     </div>
 
+    <!-- Choices.js for searchable select -->
+    <script src="https://cdn.jsdelivr.net/npm/choices.js@10.2.0/public/assets/scripts/choices.min.js"></script>
+
     <script src="${pageContext.request.contextPath}/static/js/profile.js"></script>
 
     <!-- Logout Handler -->
@@ -223,12 +265,16 @@ uri="http://java.sun.com/jsp/jstl/core" %>
       document
         .getElementById("logoutBtn")
         .addEventListener("click", function () {
-          // Remove token and user data
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("user");
-
-          // Redirect to home page
-          window.location.href = "${pageContext.request.contextPath}/";
+          // Use global logout function from auth.js
+          if (typeof logout === "function") {
+            logout();
+          } else {
+            // Fallback: clear storage and redirect
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            localStorage.removeItem("user");
+            window.location.href = "${pageContext.request.contextPath}/";
+          }
         });
     </script>
   </body>

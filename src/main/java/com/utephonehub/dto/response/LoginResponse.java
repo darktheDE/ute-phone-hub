@@ -7,6 +7,7 @@ package com.utephonehub.dto.response;
 public class LoginResponse {
     
     private String accessToken;
+    private String refreshToken; // For internal use, will be set as HttpOnly cookie
     private UserResponse user;
     
     // Constructors
@@ -17,6 +18,12 @@ public class LoginResponse {
         this.user = user;
     }
     
+    public LoginResponse(String accessToken, String refreshToken, UserResponse user) {
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
+        this.user = user;
+    }
+    
     // Getters and Setters
     public String getAccessToken() {
         return accessToken;
@@ -24,6 +31,14 @@ public class LoginResponse {
     
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
+    }
+    
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+    
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
     
     public UserResponse getUser() {
@@ -38,6 +53,7 @@ public class LoginResponse {
     public String toString() {
         return "LoginResponse{" +
                 "accessToken='[PROTECTED]'" +
+                ", refreshToken='[PROTECTED]'" +
                 ", user=" + user +
                 '}';
     }

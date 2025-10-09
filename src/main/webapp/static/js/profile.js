@@ -1,6 +1,14 @@
 // Profile Page JavaScript - Complete Rewrite
 const API_BASE_URL = "/api/v1";
 
+// Global variables for location data
+let allProvinces = [];
+let allWards = [];
+
+// Choices.js instances
+let provinceChoice = null;
+let wardChoice = null;
+
 // ==================== UTILITY FUNCTIONS ====================
 
 // Get authentication token
@@ -63,6 +71,329 @@ function showMessage(elementId, message, isSuccess = true) {
   setTimeout(() => {
     messageEl.style.display = "none";
   }, 5000);
+}
+
+// ==================== LOCATION FUNCTIONS ====================
+
+// Initialize Choices.js for select dropdowns
+function initializeChoices() {
+  const provinceSelect = document.getElementById("province");
+  const wardSelect = document.getElementById("ward");
+
+  if (provinceSelect && typeof Choices !== "undefined") {
+    provinceChoice = new Choices(provinceSelect, {
+      searchEnabled: true,
+      searchPlaceholderValue: "Tìm kiếm tỉnh/thành phố...",
+      noResultsText: "Không tìm thấy",
+      noChoicesText: "Không có lựa chọn",
+      itemSelectText: "Chọn",
+      position: "bottom", // Dropdown sổ xuống
+      removeItemButton: false,
+      shouldSort: false,
+      placeholder: true,
+      placeholderValue: "-- Chọn Tỉnh/Thành phố --",
+      searchResultLimit: 100,
+      shouldSortItems: false, // Keep original order for scrollToChoice to work
+      classNames: {
+        containerOuter: "choices",
+        containerInner: "choices__inner",
+        input: "choices__input",
+        inputCloned: "choices__input--cloned",
+        list: "choices__list",
+        listItems: "choices__list--multiple",
+        listSingle: "choices__list--single",
+        listDropdown: "choices__list--dropdown",
+        item: "choices__item",
+        itemSelectable: "choices__item--selectable",
+        itemDisabled: "choices__item--disabled",
+        itemChoice: "choices__item--choice",
+        placeholder: "choices__placeholder",
+        group: "choices__group",
+        groupHeading: "choices__heading",
+        button: "choices__button",
+        activeState: "is-active",
+        focusState: "is-focused",
+        openState: "is-open",
+        disabledState: "is-disabled",
+        highlightedState: "is-highlighted",
+        selectedState: "is-selected",
+        flippedState: "is-flipped",
+        loadingState: "is-loading",
+      },
+    });
+
+    // ✅ Add Choices.js event listener for province change
+    provinceSelect.addEventListener("change", handleProvinceChange);
+    console.log("✅ Province Choices.js event listener added");
+  }
+
+  if (wardSelect && typeof Choices !== "undefined") {
+    wardChoice = new Choices(wardSelect, {
+      searchEnabled: true,
+      searchPlaceholderValue: "Tìm kiếm xã/phường...",
+      noResultsText: "Không tìm thấy",
+      noChoicesText: "Vui lòng chọn tỉnh/thành phố trước",
+      itemSelectText: "Chọn",
+      position: "bottom",
+      removeItemButton: false,
+      shouldSort: false,
+      placeholder: true,
+      placeholderValue: "-- Chọn Xã/Phường --",
+      searchResultLimit: 100,
+    });
+
+    // ✅ Add Choices.js event listener for ward change
+    wardSelect.addEventListener("change", handleWardChange);
+    console.log("✅ Ward Choices.js event listener added");
+  }
+
+  console.log("✅ Choices.js initialized");
+}
+
+// Load all provinces
+async function loadProvinces() {
+  try {
+    const response = await fetchAPI(`${API_BASE_URL}/location/provinces`);
+
+    if (response && response.ok) {
+      const data = await response.json();
+      if (data.success) {
+        allProvinces = data.data;
+        populateProvinceSelect();
+        console.log(`✅ Loaded ${allProvinces.length} provinces`);
+      }
+    }
+  } catch (error) {
+    console.error("Error loading provinces:", error);
+  }
+}
+
+// Load wards for a specific province
+async function loadWardsForProvince(provinceCode) {
+  try {
+    const response = await fetchAPI(
+      `${API_BASE_URL}/location/provinces/${provinceCode}/wards`
+    );
+
+    if (response && response.ok) {
+      const data = await response.json();
+      if (data.success) {
+        console.log(
+          `✅ Loaded ${data.data.length} wards for province ${provinceCode}`
+        );
+        return data.data;
+      }
+    }
+    return [];
+  } catch (error) {
+    console.error("Error loading wards for province:", error);
+    return [];
+  }
+}
+
+// Populate province select
+function populateProvinceSelect() {
+  if (provinceChoice) {
+    // Clear existing choices
+    provinceChoice.clearStore();
+
+    // Add new choices
+    const choices = allProvinces.map((province) => ({
+      value: province.name,
+      label: province.name,
+      customProperties: {
+        code: province.code,
+      },
+    }));
+
+    provinceChoice.setChoices(choices, "value", "label", true);
+    console.log(`✅ Loaded ${choices.length} provinces into Choices.js`);
+  } else {
+    // Fallback to native select
+    const provinceSelect = document.getElementById("province");
+    if (!provinceSelect) return;
+
+    provinceSelect.innerHTML =
+      '<option value="">-- Chọn Tỉnh/Thành phố --</option>';
+
+    allProvinces.forEach((province) => {
+      const option = document.createElement("option");
+      option.value = province.name;
+      option.textContent = province.name;
+      option.dataset.code = province.code;
+      provinceSelect.appendChild(option);
+    });
+  }
+}
+
+// Populate ward select with array of wards
+function populateWardSelect(wards) {
+  if (wardChoice) {
+    // Clear existing choices
+    wardChoice.clearStore();
+
+    if (!wards || wards.length === 0) {
+      wardChoice.setChoices(
+        [
+          {
+            value: "",
+            label: "-- Chọn Xã/Phường --",
+            selected: true,
+            disabled: false,
+          },
+        ],
+        "value",
+        "label",
+        true
+      );
+      return;
+    }
+
+    // Add new choices
+    const choices = wards.map((ward) => ({
+      value: ward.name,
+      label: ward.name,
+      customProperties: {
+        code: ward.code,
+      },
+    }));
+
+    wardChoice.setChoices(choices, "value", "label", true);
+    console.log(`✅ Populated ${choices.length} wards in Choices.js`);
+  } else {
+    // Fallback to native select
+    const wardSelect = document.getElementById("ward");
+    if (!wardSelect) return;
+
+    wardSelect.innerHTML = '<option value="">-- Chọn Xã/Phường --</option>';
+
+    if (!wards || wards.length === 0) return;
+
+    wards.forEach((ward) => {
+      const option = document.createElement("option");
+      option.value = ward.name;
+      option.textContent = ward.name;
+      option.dataset.code = ward.code;
+      wardSelect.appendChild(option);
+    });
+
+    console.log(`✅ Populated ${wards.length} wards in dropdown`);
+  }
+}
+
+// Handle province selection change
+async function handleProvinceChange(event) {
+  console.log("🔔 handleProvinceChange triggered", event);
+
+  const provinceCodeInput = document.getElementById("provinceCode");
+
+  let provinceName, provinceCode;
+
+  if (provinceChoice) {
+    // Get from Choices.js
+    const selectedChoice = provinceChoice.getValue(true);
+    provinceName = selectedChoice;
+
+    console.log("📍 Selected province:", provinceName);
+
+    // Find province code
+    const province = allProvinces.find((p) => p.name === provinceName);
+    provinceCode = province ? province.code : "";
+
+    console.log("📍 Province code:", provinceCode);
+
+    // Scroll to selected province in dropdown
+    if (provinceCode) {
+      setTimeout(() => {
+        const selectedItem = provinceChoice._currentState.items.find(
+          (item) =>
+            item.customProperties && item.customProperties.code === provinceCode
+        );
+        if (selectedItem) {
+          provinceChoice.highlightItem(selectedItem, true);
+        }
+      }, 100);
+    }
+  } else {
+    // Get from native select
+    const provinceSelect = document.getElementById("province");
+    if (!provinceSelect) return;
+
+    const selectedOption = provinceSelect.options[provinceSelect.selectedIndex];
+    provinceName = selectedOption.value;
+    provinceCode = selectedOption.dataset.code;
+  }
+
+  // Update hidden input
+  if (provinceCodeInput) {
+    provinceCodeInput.value = provinceCode || "";
+  }
+
+  // Load wards for selected province
+  if (provinceCode) {
+    console.log("🔄 Loading wards for province:", provinceCode);
+    const wards = await loadWardsForProvince(provinceCode);
+    console.log("✅ Loaded wards:", wards);
+    populateWardSelect(wards);
+  } else {
+    // Clear ward select
+    populateWardSelect([]);
+    document.getElementById("wardCode").value = "";
+  }
+}
+
+// Handle ward selection change
+function handleWardChange(event) {
+  console.log("🔔 handleWardChange triggered", event);
+
+  const wardCodeInput = document.getElementById("wardCode");
+
+  let wardName, wardCode;
+
+  if (wardChoice) {
+    // Get from Choices.js
+    const selectedChoice = wardChoice.getValue(true);
+    wardName = selectedChoice;
+
+    console.log("📍 Selected ward:", wardName);
+
+    // Find ward code from all loaded wards
+    const currentWards = wardChoice._currentState.choices.filter(
+      (c) => c.value === wardName
+    );
+
+    if (currentWards.length > 0 && currentWards[0].customProperties) {
+      wardCode = currentWards[0].customProperties.code;
+      console.log("📍 Ward code:", wardCode);
+    }
+
+    // Scroll to selected ward in dropdown
+    if (wardCode) {
+      setTimeout(() => {
+        const selectedItem = wardChoice._currentState.items.find(
+          (item) =>
+            item.customProperties && item.customProperties.code === wardCode
+        );
+        if (selectedItem) {
+          wardChoice.highlightItem(selectedItem, true);
+        }
+      }, 100);
+    }
+  } else {
+    // Get from native select
+    const wardSelect = document.getElementById("ward");
+    if (!wardSelect) return;
+
+    const selectedOption = wardSelect.options[wardSelect.selectedIndex];
+    wardName = selectedOption.value;
+    wardCode = selectedOption.dataset.code;
+  }
+
+  // Update hidden input
+  if (wardCodeInput) {
+    wardCodeInput.value = wardCode || "";
+    console.log("✅ Updated wardCode input:", wardCode);
+  }
 }
 
 // ==================== PROFILE FUNCTIONS ====================
@@ -225,8 +556,8 @@ async function loadAddresses() {
           <h4>${address.recipientName}</h4>
           <p><i class='bx bx-phone'></i> ${address.phoneNumber}</p>
           <p><i class='bx bx-map'></i> ${address.streetAddress}, ${
-            address.city
-          }</p>
+            address.ward ? address.ward : "N/A"
+          }, ${address.province ? address.province : "N/A"}</p>
           <div class="address-actions">
             <button class="btn btn-sm btn-primary" onclick="editAddress(${
               address.id
@@ -367,13 +698,15 @@ async function editAddress(id) {
         document.getElementById("recipientName").value = address.recipientName;
         document.getElementById("recipientPhone").value = address.phoneNumber;
         document.getElementById("streetAddress").value = address.streetAddress;
-        document.getElementById("city").value = address.city;
         document.getElementById("isDefault").checked = address.isDefault;
+
+        // Store the address data to set after modal opens
+        window.editingAddress = address;
 
         // Update modal title
         document.getElementById("modalTitle").textContent = "Sửa địa chỉ";
 
-        // Show modal
+        // Show modal - will trigger province/ward population
         openModal();
       }
     }
@@ -389,6 +722,72 @@ function openModal() {
   if (modal) {
     modal.classList.add("show");
     modal.style.display = "flex";
+
+    // Load provinces when modal opens
+    if (allProvinces.length === 0) {
+      console.log("Loading provinces for address modal...");
+      loadProvinces().then(() => {
+        // After provinces loaded, set editing address if exists
+        setEditingAddress();
+      });
+    } else {
+      console.log("Provinces already loaded:", allProvinces.length);
+      populateProvinceSelect();
+      // Set editing address after populating
+      setEditingAddress();
+    }
+  }
+}
+
+/**
+ * Set province and ward for editing address
+ */
+async function setEditingAddress() {
+  if (window.editingAddress) {
+    const address = window.editingAddress;
+    console.log("🔧 Setting editing address:", address);
+
+    // Set province using Choices.js by finding province with matching code
+    if (address.provinceCode && provinceChoice) {
+      // Find province name from code
+      const province = allProvinces.find((p) => p.code == address.provinceCode);
+      if (province) {
+        console.log(
+          "🔧 Setting province:",
+          province.name,
+          "code:",
+          province.code
+        );
+        provinceChoice.setChoiceByValue(province.name);
+        document.getElementById("provinceCode").value = address.provinceCode;
+
+        // Load and set wards
+        console.log("🔄 Loading wards for province:", address.provinceCode);
+        const wards = await loadWardsForProvince(address.provinceCode);
+        populateWardSelect(wards);
+
+        // Set ward after wards are populated
+        if (address.wardCode && wardChoice) {
+          setTimeout(() => {
+            // Find ward name from code
+            const ward = wards.find((w) => w.code == address.wardCode);
+            if (ward) {
+              console.log("🔧 Setting ward:", ward.name, "code:", ward.code);
+              wardChoice.setChoiceByValue(ward.name);
+              document.getElementById("wardCode").value = address.wardCode;
+            } else {
+              console.warn("⚠️ Ward not found with code:", address.wardCode);
+            }
+          }, 300);
+        }
+      } else {
+        console.warn("⚠️ Province not found with code:", address.provinceCode);
+      }
+    }
+
+    // Clear the editing address
+    window.editingAddress = null;
+    console.log("✅ Editing address populated and cleared");
   }
 }
 
@@ -419,8 +818,12 @@ document.addEventListener("DOMContentLoaded", function () {
     return;
   }
 
-  // Load profile data
+  // Initialize Choices.js for searchable selects
+  initializeChoices();
+
+  // Load profile data and locations
   loadProfile();
+  loadProvinces();
 
   // Tab switching
   const navItems = document.querySelectorAll(".nav-item");
@@ -475,7 +878,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const oldPassword = document.getElementById("oldPassword").value;
       const newPassword = document.getElementById("newPassword").value;
-      const confirmPassword = document.getElementById("confirmPassword").value;
+      const confirmPassword = document.getElementById(
+        "profileConfirmPassword"
+      ).value;
 
       // Validate passwords
       if (newPassword !== confirmPassword) {
@@ -524,7 +929,10 @@ document.addEventListener("DOMContentLoaded", function () {
         recipientName: document.getElementById("recipientName").value,
         phoneNumber: document.getElementById("recipientPhone").value,
         streetAddress: document.getElementById("streetAddress").value,
-        city: document.getElementById("city").value,
+        province: document.getElementById("province").value,
+        provinceCode: document.getElementById("provinceCode").value,
+        ward: document.getElementById("ward").value,
+        wardCode: document.getElementById("wardCode").value,
         isDefault: document.getElementById("isDefault").checked,
       };
 
@@ -554,6 +962,20 @@ document.addEventListener("DOMContentLoaded", function () {
         closeModal();
       }
     });
+  }
+
+  // Add event listeners for province and ward dropdowns
+  const provinceSelect = document.getElementById("province");
+  const wardSelect = document.getElementById("ward");
+
+  if (provinceSelect) {
+    provinceSelect.addEventListener("change", handleProvinceChange);
+    console.log("✅ Province select event listener added");
+  }
+
+  if (wardSelect) {
+    wardSelect.addEventListener("change", handleWardChange);
+    console.log("✅ Ward select event listener added");
   }
 });
 

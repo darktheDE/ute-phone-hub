@@ -31,10 +31,25 @@ public class Address {
     @Column(name = "street_address", nullable = false, columnDefinition = "TEXT")
     private String streetAddress;
     
-    @NotBlank(message = "Thành phố không được để trống")
-    @Size(max = 100, message = "Thành phố không được quá 100 ký tự")
-    @Column(name = "city", nullable = false)
-    private String city;
+    // Vietnam address: Province/City name and code
+    @NotBlank(message = "Tỉnh/Thành phố không được để trống")
+    @Size(max = 100, message = "Tỉnh/Thành phố không được quá 100 ký tự")
+    @Column(name = "province", nullable = false)
+    private String province;
+    
+    @Column(name = "province_code")
+    @Size(max = 10, message = "Mã tỉnh/thành không được quá 10 ký tự")
+    private String provinceCode;
+    
+    // Vietnam address: Ward/Commune name and code  
+    @NotBlank(message = "Xã/Phường không được để trống")
+    @Size(max = 100, message = "Xã/Phường không được quá 100 ký tự")
+    @Column(name = "ward", nullable = false)
+    private String ward;
+    
+    @Column(name = "ward_code")
+    @Size(max = 10, message = "Mã xã/phường không được quá 10 ký tự")
+    private String wardCode;
     
     @Column(name = "is_default")
     private Boolean isDefault = false;
@@ -51,13 +66,14 @@ public class Address {
         this.updatedAt = LocalDateTime.now();
     }
     
-    public Address(User user, String recipientName, String phoneNumber, String streetAddress, String city) {
+    public Address(User user, String recipientName, String phoneNumber, String streetAddress, String province, String ward) {
         this();
         this.user = user;
         this.recipientName = recipientName;
         this.phoneNumber = phoneNumber;
         this.streetAddress = streetAddress;
-        this.city = city;
+        this.province = province;
+        this.ward = ward;
     }
     
     // Lifecycle callbacks
@@ -107,12 +123,36 @@ public class Address {
         this.streetAddress = streetAddress;
     }
     
-    public String getCity() {
-        return city;
+    public String getProvince() {
+        return province;
     }
     
-    public void setCity(String city) {
-        this.city = city;
+    public void setProvince(String province) {
+        this.province = province;
+    }
+    
+    public String getProvinceCode() {
+        return provinceCode;
+    }
+    
+    public void setProvinceCode(String provinceCode) {
+        this.provinceCode = provinceCode;
+    }
+    
+    public String getWard() {
+        return ward;
+    }
+    
+    public void setWard(String ward) {
+        this.ward = ward;
+    }
+    
+    public String getWardCode() {
+        return wardCode;
+    }
+    
+    public void setWardCode(String wardCode) {
+        this.wardCode = wardCode;
     }
     
     public Boolean getIsDefault() {

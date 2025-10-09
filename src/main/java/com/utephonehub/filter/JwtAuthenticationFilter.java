@@ -24,7 +24,11 @@ public class JwtAuthenticationFilter implements Filter {
     private static final String[] PUBLIC_ENDPOINTS = {
         "/api/v1/auth/register",
         "/api/v1/auth/login",
-        "/api/v1/health"
+        "/api/v1/auth/forgot-password/*",  // All forgot-password sub-paths
+        "/api/v1/auth/reset-password",
+        "/api/v1/auth/refresh",
+        "/api/v1/health",
+        "/api/v1/location/*"  // All location endpoints
     };
     
     public JwtAuthenticationFilter() {
@@ -43,14 +47,17 @@ public class JwtAuthenticationFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         
+        // Get request path without context path
+        String contextPath = httpRequest.getContextPath();
         String requestURI = httpRequest.getRequestURI();
+        String path = requestURI.substring(contextPath.length());
         String method = httpRequest.getMethod();
         
-        logger.debug("JWT Filter - {} {}", method, requestURI);
+        logger.debug("JWT Filter - {} {} (context: {}, full URI: {})", method, path, contextPath, requestURI);
         
         // Kiểm tra xem endpoint có public không
-        if (isPublicEndpoint(requestURI)) {
-            logger.debug("Public endpoint, skipping authentication: {}", requestURI);
+        if (isPublicEndpoint(path)) {
+            logger.debug("Public endpoint, skipping authentication: {}", path);
             chain.doFilter(request, response);
             return;
         }
@@ -60,7 +67,7 @@ public class JwtAuthenticationFilter implements Filter {
         String token = jwtUtil.extractTokenFromHeader(authHeader);
         
         if (token == null) {
-            logger.warn("No JWT token found in request: {}", requestURI);
+            logger.warn("No JWT token found in request: {}", path);
             sendUnauthorizedResponse(httpResponse, "Access token is required");
             return;
         }
@@ -106,7 +113,12 @@ public class JwtAuthenticationFilter implements Filter {
      */
     private boolean isPublicEndpoint(String requestURI) {
         for (String endpoint : PUBLIC_ENDPOINTS) {
+            // Exact match
             if (requestURI.equals(endpoint)) {
+                return true;
+            }
+            // Wildcard pattern matching (support /* suffix)
+            if (endpoint.endsWith("/*") && requestURI.startsWith(endpoint.substring(0, endpoint.length() - 1))) {
                 return true;
             }
         }
